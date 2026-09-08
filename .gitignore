@@ -1,0 +1,14 @@
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Node / Build artifacts (if extended later)
+node_modules/
+dist/
+build/
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
