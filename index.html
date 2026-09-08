@@ -8,20 +8,20 @@
     <!-- Premium Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- TradingView Lightweight Charts Standalone CDN -->
     <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
     
     <style>
         :root {
-            --bg-canvas: #06080e;
-            --bg-surface: #0b0f19;
-            --bg-surface-elevated: #111726;
-            --bg-surface-hover: #161f33;
-            --border-hairline: rgba(255, 255, 255, 0.06);
-            --border-active: rgba(0, 119, 255, 0.4);
-            --border-glow: rgba(0, 229, 255, 0.15);
+            --bg-canvas: #04060a;
+            --bg-surface: #090d16;
+            --bg-surface-elevated: #0f1524;
+            --bg-surface-hover: #141c30;
+            --border-hairline: rgba(255, 255, 255, 0.07);
+            --border-active: rgba(0, 119, 255, 0.45);
+            --border-glow: rgba(0, 229, 255, 0.2);
 
             --brand-webull: #0066ff;
             --brand-cyan: #00e5ff;
@@ -43,8 +43,8 @@
             --radius-lg: 16px;
             --radius-pill: 9999px;
             
-            --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.4);
-            --shadow-glow: 0 0 25px rgba(0, 102, 255, 0.15);
+            --shadow-subtle: 0 4px 24px rgba(0, 0, 0, 0.45);
+            --shadow-glow: 0 0 30px rgba(0, 102, 255, 0.18);
         }
 
         * {
@@ -63,8 +63,9 @@
             padding-bottom: 76px;
             overflow-x: hidden;
             background-image: 
-                radial-gradient(circle at 15% 10%, rgba(0, 102, 255, 0.07) 0%, transparent 40%),
-                radial-gradient(circle at 85% 60%, rgba(157, 78, 221, 0.04) 0%, transparent 45%);
+                radial-gradient(circle at 12% 8%, rgba(0, 102, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 88% 50%, rgba(157, 78, 221, 0.05) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(0, 230, 118, 0.03) 0%, transparent 50%);
             background-attachment: fixed;
         }
 
@@ -72,7 +73,7 @@
            1. TICKER TAPE RIBBON
         ---------------------------------------------------- */
         .market-ribbon {
-            background: rgba(6, 8, 14, 0.94);
+            background: rgba(4, 6, 10, 0.95);
             border-bottom: 1px solid var(--border-hairline);
             height: 38px;
             display: flex;
@@ -85,14 +86,14 @@
             z-index: 102;
             position: sticky;
             top: 0;
-            backdrop-filter: blur(14px);
+            backdrop-filter: blur(16px);
         }
         .market-ribbon::-webkit-scrollbar { display: none; }
 
         .ribbon-track {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 22px;
             width: 100%;
         }
 
@@ -110,7 +111,7 @@
             background: var(--bg-surface-hover);
         }
         .ribbon-symbol {
-            font-weight: 700;
+            font-weight: 800;
             color: #fff;
         }
         .ribbon-price {
@@ -119,21 +120,21 @@
         }
         .ribbon-tag-source {
             font-size: 9px;
-            padding: 1px 4px;
-            background: rgba(255, 255, 255, 0.05);
+            padding: 1px 5px;
+            background: rgba(255, 255, 255, 0.06);
             border-radius: 3px;
             color: var(--text-secondary);
         }
 
         /* ----------------------------------------------------
-           2. HEADER & ORACLE SYNC BAR
+           2. HEADER & TELEMETRY
         ---------------------------------------------------- */
         header {
-            background: rgba(11, 15, 25, 0.88);
+            background: rgba(9, 13, 22, 0.9);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-hairline);
-            padding: 14px 24px;
+            padding: 16px 24px;
             display: flex;
             flex-direction: column;
             gap: 14px;
@@ -156,23 +157,24 @@
         }
 
         .brand-mark {
-            width: 42px;
-            height: 42px;
+            width: 44px;
+            height: 44px;
             background: linear-gradient(135deg, #0052ff, #00d2ff);
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: var(--font-display);
-            font-weight: 800;
-            font-size: 20px;
+            font-weight: 900;
+            font-size: 22px;
             color: #fff;
-            box-shadow: 0 4px 18px rgba(0, 82, 255, 0.35);
+            box-shadow: 0 6px 22px rgba(0, 82, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .brand-meta h1 {
             font-family: var(--font-display);
-            font-size: 19px;
+            font-size: 20px;
             font-weight: 800;
             letter-spacing: -0.02em;
             display: flex;
@@ -198,11 +200,12 @@
 
         .spot-price-text {
             font-family: var(--font-mono);
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 800;
             color: #fff;
             font-variant-numeric: tabular-nums;
             transition: color 0.25s ease, transform 0.2s ease;
+            letter-spacing: -0.02em;
         }
         .spot-delta-text {
             font-family: var(--font-mono);
@@ -214,21 +217,23 @@
         .flash-up {
             color: var(--brand-emerald) !important;
             transform: scale(1.05);
+            text-shadow: 0 0 12px rgba(0, 230, 118, 0.4);
         }
         .flash-down {
             color: var(--brand-crimson) !important;
             transform: scale(0.95);
+            text-shadow: 0 0 12px rgba(255, 51, 102, 0.4);
         }
 
-        /* Oracle Strip with Live WebSocket Telemetry */
+        /* Oracle Strip with Telemetry */
         .oracle-strip {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(17, 23, 38, 0.65);
+            background: rgba(15, 21, 36, 0.7);
             border: 1px solid var(--border-hairline);
             border-radius: var(--radius-md);
-            padding: 8px 14px;
+            padding: 8px 16px;
             font-size: 11px;
             font-family: var(--font-mono);
             flex-wrap: wrap;
@@ -238,7 +243,7 @@
         .oracle-telemetry {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             color: var(--text-secondary);
             flex-wrap: wrap;
         }
@@ -248,32 +253,32 @@
             height: 8px;
             border-radius: 50%;
             background: var(--brand-emerald);
-            box-shadow: 0 0 10px var(--brand-emerald);
+            box-shadow: 0 0 12px var(--brand-emerald);
             animation: pulseAura 2s infinite ease-in-out;
         }
         @keyframes pulseAura {
             0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.35; transform: scale(0.85); }
+            50% { opacity: 0.3; transform: scale(0.8); }
         }
 
         .ws-stat-chip {
-            background: rgba(0, 230, 118, 0.1);
+            background: rgba(0, 230, 118, 0.12);
             color: var(--brand-emerald);
             border: 1px solid rgba(0, 230, 118, 0.25);
             border-radius: 4px;
-            padding: 2px 6px;
+            padding: 2px 7px;
             font-size: 10px;
             font-weight: 700;
         }
 
         .btn-oracle-sync {
-            background: rgba(0, 102, 255, 0.12);
-            border: 1px solid rgba(0, 102, 255, 0.3);
+            background: rgba(0, 102, 255, 0.14);
+            border: 1px solid rgba(0, 102, 255, 0.35);
             color: var(--brand-cyan);
             font-family: var(--font-mono);
             font-size: 11px;
             font-weight: 700;
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: var(--radius-sm);
             cursor: pointer;
             display: inline-flex;
@@ -282,14 +287,15 @@
             transition: all 0.2s;
         }
         .btn-oracle-sync:hover {
-            background: rgba(0, 102, 255, 0.22);
+            background: rgba(0, 102, 255, 0.25);
             border-color: var(--brand-cyan);
+            box-shadow: 0 0 14px rgba(0, 229, 255, 0.2);
         }
 
         /* Navigation Pills */
         .navigation-pills {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             overflow-x: auto;
             scrollbar-width: none;
             padding-bottom: 2px;
@@ -300,7 +306,7 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-hairline);
             color: var(--text-secondary);
-            padding: 8px 18px;
+            padding: 9px 20px;
             border-radius: var(--radius-pill);
             font-size: 13px;
             font-weight: 600;
@@ -312,14 +318,14 @@
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .nav-pill:hover {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.07);
             color: var(--text-primary);
         }
         .nav-pill.active {
-            background: rgba(0, 102, 255, 0.18);
+            background: rgba(0, 102, 255, 0.2);
             border-color: var(--brand-webull);
             color: #fff;
-            box-shadow: 0 0 16px rgba(0, 102, 255, 0.25);
+            box-shadow: 0 0 20px rgba(0, 102, 255, 0.3);
         }
 
         .pill-badge {
@@ -334,7 +340,7 @@
            3. MAIN LAYOUT GRID
         ---------------------------------------------------- */
         .terminal-container {
-            max-width: 1400px;
+            max-width: 1440px;
             margin: 0 auto;
             padding: 24px 20px;
             display: grid;
@@ -342,9 +348,9 @@
             gap: 24px;
         }
 
-        @media (min-width: 1080px) {
+        @media (min-width: 1100px) {
             .terminal-container {
-                grid-template-columns: 1.4fr 0.85fr;
+                grid-template-columns: 1.45fr 0.85fr;
             }
             .grid-span-full {
                 grid-column: 1 / -1;
@@ -352,7 +358,7 @@
         }
 
         /* ----------------------------------------------------
-           4. SURFACE CARDS (Luxury Obsidian)
+           4. SURFACE CARDS (Obsidian Luxury)
         ---------------------------------------------------- */
         .glass-card {
             background: var(--bg-surface);
@@ -362,10 +368,11 @@
             position: relative;
             box-shadow: var(--shadow-subtle);
             backdrop-filter: blur(16px);
-            transition: border-color 0.2s ease;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
         .glass-card:hover {
-            border-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
         }
 
         .card-header-row {
@@ -380,7 +387,7 @@
         .card-heading {
             font-family: var(--font-display);
             font-size: 14px;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: 0.05em;
             text-transform: uppercase;
             color: var(--text-primary);
@@ -395,6 +402,7 @@
             height: 14px;
             background: var(--brand-webull);
             border-radius: 2px;
+            box-shadow: 0 0 8px var(--brand-webull);
         }
 
         .tag {
@@ -405,14 +413,113 @@
             border-radius: var(--radius-sm);
             letter-spacing: 0.02em;
         }
-        .tag-blue { background: rgba(0, 102, 255, 0.12); color: var(--brand-cyan); border: 1px solid rgba(0, 102, 255, 0.3); }
-        .tag-green { background: rgba(0, 230, 118, 0.12); color: var(--brand-emerald); border: 1px solid rgba(0, 230, 118, 0.3); }
-        .tag-amber { background: rgba(255, 179, 0, 0.12); color: var(--brand-amber); border: 1px solid rgba(255, 179, 0, 0.3); }
-        .tag-purple { background: rgba(157, 78, 221, 0.12); color: var(--brand-purple); border: 1px solid rgba(157, 78, 221, 0.3); }
+        .tag-blue { background: rgba(0, 102, 255, 0.14); color: var(--brand-cyan); border: 1px solid rgba(0, 102, 255, 0.35); }
+        .tag-green { background: rgba(0, 230, 118, 0.14); color: var(--brand-emerald); border: 1px solid rgba(0, 230, 118, 0.35); }
+        .tag-amber { background: rgba(255, 179, 0, 0.14); color: var(--brand-amber); border: 1px solid rgba(255, 179, 0, 0.35); }
+        .tag-purple { background: rgba(157, 78, 221, 0.14); color: var(--brand-purple); border: 1px solid rgba(157, 78, 221, 0.35); }
 
         /* ----------------------------------------------------
-           5. CHART STAGE (Monte Carlo vs TradingView Toggle)
+           5. ADVANCED AUTOMATED SIMULATION ENGINE
         ---------------------------------------------------- */
+        /* Macro Scenario Engine Bar (1-Click Automation) */
+        .scenario-engine-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding-bottom: 4px;
+        }
+        .scenario-engine-bar::-webkit-scrollbar { display: none; }
+
+        .scenario-chip {
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border-hairline);
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 13px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .scenario-chip:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .scenario-chip.active {
+            background: rgba(0, 102, 255, 0.18);
+            border-color: var(--brand-cyan);
+            color: #fff;
+            box-shadow: 0 0 14px rgba(0, 229, 255, 0.25);
+        }
+
+        /* Stochastic Model Toggles */
+        .engine-config-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            gap: 12px;
+            flex-wrap: wrap;
+            background: rgba(15, 21, 36, 0.5);
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-md);
+            padding: 8px 14px;
+        }
+
+        .engine-auto-toggles {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .toggle-switch-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            user-select: none;
+        }
+        .toggle-switch-label input { display: none; }
+        .toggle-switch-handle {
+            width: 30px;
+            height: 16px;
+            background: #1c263c;
+            border-radius: 8px;
+            position: relative;
+            transition: background 0.2s;
+        }
+        .toggle-switch-handle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #fff;
+            transition: transform 0.2s;
+        }
+        .toggle-switch-label input:checked + .toggle-switch-handle {
+            background: var(--brand-emerald);
+        }
+        .toggle-switch-label input:checked + .toggle-switch-handle::after {
+            transform: translateX(14px);
+        }
+
+        /* Chart Viewport Stage */
         .chart-engine-toggle-bar {
             display: flex;
             align-items: center;
@@ -424,7 +531,7 @@
 
         .segmented-group {
             display: inline-flex;
-            background: rgba(255, 255, 255, 0.025);
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-hairline);
             border-radius: var(--radius-md);
             padding: 3px;
@@ -438,7 +545,7 @@
             font-family: var(--font-mono);
             font-size: 11px;
             font-weight: 700;
-            padding: 6px 12px;
+            padding: 6px 13px;
             border-radius: var(--radius-sm);
             cursor: pointer;
             transition: all 0.15s ease;
@@ -452,22 +559,13 @@
             box-shadow: 0 2px 10px rgba(0, 102, 255, 0.4);
         }
 
-        .technicals-strip {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: var(--font-mono);
-            font-size: 11px;
-            flex-wrap: wrap;
-        }
-
         .chart-stage-wrapper {
             position: relative;
             width: 100%;
             height: 380px;
-            background: #04060b;
+            background: #030508;
             border-radius: var(--radius-md);
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             margin-bottom: 18px;
             overflow: hidden;
         }
@@ -489,17 +587,34 @@
             position: absolute;
             top: 14px;
             left: 16px;
-            background: rgba(11, 15, 25, 0.88);
+            background: rgba(9, 13, 22, 0.92);
             border: 1px solid var(--border-hairline);
             border-radius: var(--radius-sm);
-            padding: 8px 12px;
+            padding: 8px 14px;
             font-family: var(--font-mono);
             font-size: 11px;
             color: var(--text-secondary);
             pointer-events: none;
             display: flex;
             gap: 16px;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
+            z-index: 5;
+        }
+
+        .chart-legend-badge {
+            position: absolute;
+            bottom: 14px;
+            left: 16px;
+            background: rgba(9, 13, 22, 0.85);
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-sm);
+            padding: 4px 10px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-tertiary);
+            pointer-events: none;
+            display: flex;
+            gap: 12px;
             z-index: 5;
         }
 
@@ -528,7 +643,7 @@
             -webkit-appearance: none;
             width: 100%;
             height: 6px;
-            background: #151d2f;
+            background: #141b2b;
             border-radius: 3px;
             outline: none;
         }
@@ -555,14 +670,14 @@
             background: linear-gradient(135deg, #0052ff, #00a2ff);
             color: #fff;
             font-family: var(--font-display);
-            font-weight: 700;
+            font-weight: 800;
             font-size: 14px;
             border: none;
             border-radius: var(--radius-md);
             padding: 14px 24px;
             cursor: pointer;
             width: 100%;
-            box-shadow: 0 4px 20px rgba(0, 82, 255, 0.4);
+            box-shadow: 0 4px 22px rgba(0, 82, 255, 0.4);
             transition: all 0.2s ease;
             letter-spacing: 0.02em;
         }
@@ -584,7 +699,7 @@
         }
 
         .metric-cell {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.025);
             border: 1px solid var(--border-hairline);
             border-radius: var(--radius-md);
             padding: 14px;
@@ -643,8 +758,8 @@
         }
 
         .pnl-hero-banner {
-            background: linear-gradient(135deg, rgba(0, 102, 255, 0.14), rgba(0, 230, 118, 0.06));
-            border: 1px solid rgba(0, 102, 255, 0.25);
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.15), rgba(0, 230, 118, 0.06));
+            border: 1px solid rgba(0, 102, 255, 0.28);
             border-radius: var(--radius-md);
             padding: 18px;
             text-align: center;
@@ -736,7 +851,7 @@
             font-size: 13px;
         }
         .bar-track-shell {
-            background: #0d1322;
+            background: #0b1120;
             height: 12px;
             border-radius: 6px;
             overflow: hidden;
@@ -755,13 +870,76 @@
             color: var(--brand-emerald);
         }
 
+        /* ----------------------------------------------------
+           8. MODAL / DIALOGS (Deploy Guide)
+        ---------------------------------------------------- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(12px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-lg);
+            max-width: 620px;
+            width: 100%;
+            padding: 28px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            position: relative;
+        }
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .modal-step {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        .modal-step-title {
+            font-weight: 700;
+            color: var(--brand-cyan);
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
         /* Bottom Floating Bar */
         .floating-dock {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(8, 11, 20, 0.95);
+            background: rgba(6, 9, 16, 0.95);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-top: 1px solid var(--border-hairline);
@@ -806,7 +984,7 @@
 
         @media print {
             body { background: #fff !important; color: #000 !important; }
-            .market-ribbon, header, .floating-dock, .btn-execute-sim, .sliders-grid, .chart-engine-toggle-bar { display: none !important; }
+            .market-ribbon, header, .floating-dock, .btn-execute-sim, .sliders-grid, .chart-engine-toggle-bar, .scenario-engine-bar, .engine-config-bar { display: none !important; }
             .glass-card { border: 1px solid #ddd !important; background: #fff !important; color: #000 !important; }
         }
     </style>
@@ -844,17 +1022,17 @@
         <div class="oracle-strip">
             <div class="oracle-telemetry">
                 <span class="live-dot" id="wsConnectionDot"></span>
-                <span>DATA ENGINE: <strong id="oracleSourceLabel" style="color: #fff;">HYBRID WS & REST (Coinbase + OKX V5 + Yahoo)</strong></span>
+                <span>QUANT ENGINE: <strong id="oracleSourceLabel" style="color: #fff;">HYBRID WS & REST (Coinbase + OKX V5 + Yahoo)</strong></span>
                 <span style="color: var(--text-tertiary);">•</span>
-                <span class="ws-stat-chip" id="wsLatencyBadge">WS PING: 34ms</span>
-                <span class="ws-stat-chip" id="wsThroughputBadge" style="background: rgba(0, 102, 255, 0.1); color: var(--brand-cyan); border-color: rgba(0, 102, 255, 0.3);">12 TICKS/SEC</span>
+                <span class="ws-stat-chip" id="wsLatencyBadge">WS PING: 32ms</span>
+                <span class="ws-stat-chip" id="wsThroughputBadge" style="background: rgba(0, 102, 255, 0.12); color: var(--brand-cyan); border-color: rgba(0, 102, 255, 0.35);">14 TICKS/SEC</span>
                 <span style="color: var(--text-tertiary);">•</span>
-                <span id="oracleTimestamp" style="color: var(--text-secondary);">Sync: Live Streaming</span>
+                <span id="oracleTimestamp" style="color: var(--text-secondary);">Live Stream Connected</span>
             </div>
             <div>
                 <button class="btn-oracle-sync" onclick="MarketOracle.fetchRealTimeData(true)">
                     <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    Force Reconnect / Poll
+                    Sync Free Oracles
                 </button>
             </div>
         </div>
@@ -896,36 +1074,55 @@
     <div id="terminal-view" class="terminal-container section-view active">
         <!-- Dual Chart Engine Stage -->
         <div class="glass-card">
-            <!-- Chart Mode Toggle & Indicators Bar -->
-            <div class="chart-engine-toggle-bar">
+            <!-- Macro Scenario Presets Bar (1-Click Automation) -->
+            <div style="font-size: 10px; font-family: var(--font-mono); color: var(--text-tertiary); text-transform: uppercase; margin-bottom: 6px;">
+                AUTOMATED SCENARIO PRESETS (1-CLICK CALIBRATION)
+            </div>
+            <div class="scenario-engine-bar">
+                <div class="scenario-chip active" onclick="applyMacroScenario('BASE')">
+                    <span>⚖️ Base Consensus</span>
+                </div>
+                <div class="scenario-chip" onclick="applyMacroScenario('BULL')">
+                    <span>🚀 Institutional Expansion (+2.5σ)</span>
+                </div>
+                <div class="scenario-chip" onclick="applyMacroScenario('REVERT')">
+                    <span>🔄 Mean Reversion / Low Vol</span>
+                </div>
+                <div class="scenario-chip" onclick="applyMacroScenario('SHOCK')">
+                    <span>⚠️ Liquidity Stress Shock (-2.0σ)</span>
+                </div>
+            </div>
+
+            <!-- Engine Automated Configuration Bar -->
+            <div class="engine-config-bar">
+                <div class="engine-auto-toggles">
+                    <label class="toggle-switch-label">
+                        <input type="checkbox" id="autoSimToggle" checked onchange="toggleAutoSim(this.checked)">
+                        <span class="toggle-switch-handle"></span>
+                        <span>Auto-Simulate on Market Ticks</span>
+                    </label>
+
+                    <label class="toggle-switch-label">
+                        <input type="checkbox" id="mertonJumpToggle" onchange="toggleMertonJumps(this.checked)">
+                        <span class="toggle-switch-handle"></span>
+                        <span>Merton Jump-Diffusion (Gaps)</span>
+                    </label>
+                </div>
+
                 <div class="segmented-group" id="chartEngineToggle">
                     <button class="segment-btn active" id="btnModeMonteCarlo" onclick="switchChartEngine('MC')">
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-                        Monte Carlo (GBM Paths)
+                        Monte Carlo (Fan & Density)
                     </button>
                     <button class="segment-btn" id="btnModeCandlestick" onclick="switchChartEngine('TV')">
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 3v18M17 3v18M3 8h8v8H3zM13 6h8v8h-8z"></path></svg>
-                        TradingView Candlesticks & Technicals
+                        TradingView Candlesticks
                     </button>
-                </div>
-
-                <!-- Technicals Strip (Visible in TV mode) -->
-                <div class="technicals-strip" id="technicalsIndicatorsStrip" style="display: none;">
-                    <span class="tag" style="background: rgba(0, 229, 255, 0.12); color: var(--brand-cyan); border: 1px solid rgba(0, 229, 255, 0.3);" id="tagEma20">EMA 20</span>
-                    <span class="tag" style="background: rgba(255, 179, 0, 0.12); color: var(--brand-amber); border: 1px solid rgba(255, 179, 0, 0.3);" id="tagEma50">EMA 50</span>
-                    <span class="tag" style="background: rgba(0, 230, 118, 0.12); color: var(--brand-emerald); border: 1px solid rgba(0, 230, 118, 0.3);" id="tagRsi">RSI(14): 58.4</span>
-                    <span class="tag tag-blue">VOL BARS</span>
-                </div>
-
-                <!-- MC Controls (Visible in MC mode) -->
-                <div class="technicals-strip" id="mcControlsStrip">
-                    <span class="tag tag-blue" id="pathsBadge">1,000 PATHS</span>
-                    <span class="tag tag-green">REAL-TIME GBM</span>
                 </div>
             </div>
 
             <!-- Segmented Timeframe & Paths Bar (For MC) -->
-            <div class="segmented-presets-bar" id="mcPresetsBar">
+            <div class="segmented-presets-bar" id="mcPresetsBar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                 <div class="segmented-group" id="timeframePresets">
                     <button class="segment-btn" data-days="30">30D</button>
                     <button class="segment-btn" data-days="60">60D</button>
@@ -947,7 +1144,12 @@
                 <div id="simCanvasContainer">
                     <canvas id="simCanvas"></canvas>
                     <div class="chart-hover-inspect" id="hoverInspectBox">
-                        <span>Hover over chart to inspect stochastic path</span>
+                        <span>Hover over paths to inspect timeline & probability density</span>
+                    </div>
+                    <div class="chart-legend-badge">
+                        <span>● Shaded: 10th–90th Quantile Cone</span>
+                        <span>● Cyan: Expected Median</span>
+                        <span>● Right: Terminal Bell Curve</span>
                     </div>
                 </div>
 
@@ -974,7 +1176,7 @@
                 </div>
             </div>
 
-            <button class="btn-execute-sim" id="btnRerun">RE-CALCULATE SIMULATION SUITE</button>
+            <button class="btn-execute-sim" id="btnRerun">RE-RUN STOCHASTIC ENGINE</button>
 
             <!-- Quantitative Readout Cells -->
             <div class="metrics-cards-grid">
@@ -1102,16 +1304,50 @@
         </div>
     </div>
 
-    <!-- 5. Floating Bottom Status Dock -->
+    <!-- 5. Deploy Guide Modal -->
+    <div class="modal-overlay" id="deployModal" onclick="closeDeployModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="toggleDeployModal(false)">&times;</button>
+            <div class="modal-title">
+                <span>🚀 Deploy to the Web in 60 Seconds</span>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 18px;">
+                This terminal is 100% self-contained in a single file with zero dependencies. You can host and share it publicly on HTTPS with zero server setup:
+            </p>
+
+            <div class="modal-step">
+                <div class="modal-step-title">Option A: Netlify Drop (Instant, Free, No Sign-up Needed)</div>
+                <p style="color: var(--text-secondary); font-size: 12px; margin-bottom: 8px;">
+                    1. Open <a href="https://app.netlify.com/drop" target="_blank" style="color: var(--brand-cyan); font-weight: 700;">app.netlify.com/drop</a> in your browser.<br>
+                    2. Drag and drop your project folder containing <code>index.html</code>.<br>
+                    3. Netlify will immediately give you a live production URL like <code>https://webull-monad-terminal.netlify.app</code>!
+                </p>
+            </div>
+
+            <div class="modal-step">
+                <div class="modal-step-title">Option B: GitHub Pages (Automated CI/CD Included)</div>
+                <p style="color: var(--text-secondary); font-size: 12px;">
+                    Your repository already has <code>.github/workflows/deploy.yml</code> installed.<br>
+                    Simply push to GitHub and enable <strong>Settings → Pages → GitHub Actions</strong> for continuous free hosting.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Floating Bottom Status Dock -->
     <div class="floating-dock">
         <div style="display: flex; align-items: center; gap: 10px;">
             <span class="live-dot"></span>
             <span style="font-size: 12px; font-family: var(--font-mono); color: var(--brand-emerald); font-weight: 700;" id="dockStatus">
-                WEBSOCKET ENGINE ACTIVE • COINBASE & OKX LIVE
+                AUTO-SIMULATION ENGINE ACTIVE • COINBASE & OKX STREAMING
             </span>
         </div>
 
         <div style="display: flex; gap: 8px;">
+            <button class="btn-dock-action" style="background: rgba(0, 102, 255, 0.2); border-color: var(--brand-cyan); color: #fff;" onclick="toggleDeployModal(true)">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                Deploy to Web (Free)
+            </button>
             <button class="btn-dock-action" onclick="window.print()">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                 Export Brief
@@ -1123,10 +1359,10 @@
         </div>
     </div>
 
-    <!-- 6. Application Script & Core Engine -->
+    <!-- 7. Application Script & Core Engine -->
     <script>
         // -------------------------------------------------------------
-        // ACCURATE ASSET MODELS & LIVE MARKET BENCHMARKS
+        // ACCURATE ASSET MODELS & LIVE BENCHMARKS
         // -------------------------------------------------------------
         const assetData = {
             BULL: {
@@ -1264,8 +1500,9 @@
         let currentS0 = assetData.BULL.price;
         let simPathsCount = 1000;
         let activeChartEngine = 'MC'; // 'MC' or 'TV'
+        let autoSimEnabled = true;
+        let mertonJumpEnabled = false;
 
-        // Format Currency Helper
         function formatPrice(val) {
             if (val < 0.1) return '$' + val.toFixed(4);
             if (val < 10) return '$' + val.toFixed(2);
@@ -1273,7 +1510,56 @@
         }
 
         // -------------------------------------------------------------
-        // 1. NATIVE BROWSER WEBSOCKET ENGINE (Sub-100ms Coinbase & OKX)
+        // AUTOMATED SCENARIO ENGINE (1-Click Presets)
+        // -------------------------------------------------------------
+        function applyMacroScenario(scenario) {
+            document.querySelectorAll('.scenario-chip').forEach(c => c.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            const baseVol = assetData[currentAsset].defaultVol;
+            const baseDrift = assetData[currentAsset].defaultDrift;
+
+            if (scenario === 'BASE') {
+                animateSliders(baseVol, baseDrift, 90);
+                mertonJumpEnabled = false;
+                document.getElementById('mertonJumpToggle').checked = false;
+            } else if (scenario === 'BULL') {
+                animateSliders(Math.round(baseVol * 1.25), Math.round(Math.max(45, baseDrift * 1.8)), 90);
+                mertonJumpEnabled = false;
+                document.getElementById('mertonJumpToggle').checked = false;
+            } else if (scenario === 'REVERT') {
+                animateSliders(Math.round(baseVol * 0.7), 0, 90);
+                mertonJumpEnabled = false;
+                document.getElementById('mertonJumpToggle').checked = false;
+            } else if (scenario === 'SHOCK') {
+                animateSliders(Math.round(baseVol * 1.6), -35, 90);
+                mertonJumpEnabled = true;
+                document.getElementById('mertonJumpToggle').checked = true;
+            }
+
+            runMonteCarlo();
+        }
+
+        function animateSliders(targetVol, targetDrift, targetDays) {
+            volRange.value = targetVol;
+            driftRange.value = targetDrift;
+            daysRange.value = targetDays;
+            volReadout.textContent = targetVol + '%';
+            driftReadout.textContent = (targetDrift >= 0 ? '+' : '') + targetDrift + '%';
+            daysReadout.textContent = targetDays + ' Days';
+        }
+
+        function toggleAutoSim(val) {
+            autoSimEnabled = val;
+        }
+
+        function toggleMertonJumps(val) {
+            mertonJumpEnabled = val;
+            runMonteCarlo();
+        }
+
+        // -------------------------------------------------------------
+        // 1. NATIVE BROWSER WEBSOCKET ENGINE
         // -------------------------------------------------------------
         const LiveWebSockets = {
             coinbaseWS: null,
@@ -1287,18 +1573,11 @@
                 this.startThroughputMonitor();
             },
 
-            // Coinbase Live WebSocket Feed
             connectCoinbase() {
                 try {
                     this.coinbaseWS = new WebSocket('wss://ws-feed.exchange.coinbase.com');
-
                     this.coinbaseWS.onopen = () => {
-                        console.log('[WS] Coinbase Connected');
-                        const subMsg = {
-                            type: 'subscribe',
-                            product_ids: ['SOL-USD'],
-                            channels: ['ticker']
-                        };
+                        const subMsg = { type: 'subscribe', product_ids: ['SOL-USD'], channels: ['ticker'] };
                         this.coinbaseWS.send(JSON.stringify(subMsg));
                         this.updateStatus();
                     };
@@ -1314,25 +1593,14 @@
                         } catch(e) {}
                     };
 
-                    this.coinbaseWS.onerror = (e) => {
-                        console.warn('[WS] Coinbase Error, falling back to REST', e);
-                    };
-
-                    this.coinbaseWS.onclose = () => {
-                        setTimeout(() => this.connectCoinbase(), 5000);
-                    };
-                } catch(err) {
-                    console.warn('[WS] Could not initialize Coinbase WebSocket', err);
-                }
+                    this.coinbaseWS.onclose = () => { setTimeout(() => this.connectCoinbase(), 5000); };
+                } catch(err) {}
             },
 
-            // OKX Live Public V5 WebSocket Feed
             connectOKX() {
                 try {
                     this.okxWS = new WebSocket('wss://ws.okx.com:8443/ws/v5/public');
-
                     this.okxWS.onopen = () => {
-                        console.log('[WS] OKX Connected');
                         const subMsg = {
                             op: 'subscribe',
                             args: [
@@ -1344,7 +1612,6 @@
                         this.okxWS.send(JSON.stringify(subMsg));
                         this.updateStatus();
 
-                        // Keep-alive heartbeat ping every 20s
                         setInterval(() => {
                             if (this.okxWS && this.okxWS.readyState === WebSocket.OPEN) {
                                 this.lastPingTime = performance.now();
@@ -1378,16 +1645,8 @@
                         } catch(e) {}
                     };
 
-                    this.okxWS.onerror = (e) => {
-                        console.warn('[WS] OKX Error, falling back to REST', e);
-                    };
-
-                    this.okxWS.onclose = () => {
-                        setTimeout(() => this.connectOKX(), 5000);
-                    };
-                } catch(err) {
-                    console.warn('[WS] Could not initialize OKX WebSocket', err);
-                }
+                    this.okxWS.onclose = () => { setTimeout(() => this.connectOKX(), 5000); };
+                } catch(err) {}
             },
 
             updateStatus() {
@@ -1397,8 +1656,8 @@
 
                 if (isCbOpen || isOkxOpen) {
                     dot.style.background = 'var(--brand-emerald)';
-                    dot.style.boxShadow = '0 0 10px var(--brand-emerald)';
-                    document.getElementById('dockStatus').textContent = `STREAMING WS: ${isCbOpen ? 'Coinbase' : ''} ${isOkxOpen ? '& OKX' : ''} ACTIVE`;
+                    dot.style.boxShadow = '0 0 12px var(--brand-emerald)';
+                    document.getElementById('dockStatus').textContent = `AUTO-SIMULATION ENGINE ACTIVE • COINBASE & OKX STREAMING`;
                 }
             },
 
@@ -1412,14 +1671,13 @@
         };
 
         // -------------------------------------------------------------
-        // 2. MULTI-SOURCE REST ORACLE (Fallback & Stocks)
+        // 2. MARKET ORACLE (Fallback & Stocks)
         // -------------------------------------------------------------
         const MarketOracle = {
             async fetchRealTimeData(isManual = false) {
                 const tsEl = document.getElementById('oracleTimestamp');
                 tsEl.textContent = 'Syncing REST endpoints...';
 
-                // Query Yahoo proxy for stocks
                 const [yahooBull, yahooHood, yahooCoin] = await Promise.all([
                     this.fetchYahooProxy('BULL'),
                     this.fetchYahooProxy('HOOD'),
@@ -1431,14 +1689,14 @@
                 if (yahooCoin && yahooCoin > 0) this.applyLivePrice('COIN', yahooCoin, 'Yahoo Finance Proxy');
 
                 const timeStr = new Date().toLocaleTimeString();
-                tsEl.textContent = `Live Streaming • ${timeStr}`;
+                tsEl.textContent = `Live Stream • ${timeStr}`;
 
                 if (isManual) {
                     LiveWebSockets.init();
                     const status = document.getElementById('dockStatus');
                     status.textContent = 'ORACLE REFRESHED: WEBSOCKETS RE-CONNECTED';
                     setTimeout(() => {
-                        status.textContent = 'WEBSOCKET ENGINE ACTIVE • COINBASE & OKX LIVE';
+                        status.textContent = 'AUTO-SIMULATION ENGINE ACTIVE • COINBASE & OKX STREAMING';
                     }, 3000);
                 }
 
@@ -1463,7 +1721,6 @@
                 assetData[key].price = price;
                 assetData[key].source = source;
 
-                // Update TradingView Candlestick series if currently loaded
                 if (key === currentAsset) {
                     currentS0 = price;
                     const priceEl = document.getElementById('liveSpotPrice');
@@ -1477,19 +1734,20 @@
                         setTimeout(() => priceEl.classList.remove('flash-down'), 500);
                     }
 
-                    // Update live candlestick bar in TradingView chart
                     TradingViewChartEngine.updateLiveTick(price);
-
                     updateBreakEven();
-                    if (activeChartEngine === 'MC') runMonteCarlo();
+
+                    // Automated Stochastic Ripple on Market Ticks
+                    if (autoSimEnabled && activeChartEngine === 'MC') {
+                        runMonteCarlo();
+                    }
                 }
             },
 
-            // High frequency micro-ticks for assets without active WS feeds
             initMicroTicks() {
                 setInterval(() => {
                     ['BULL', 'HOOD', 'COIN'].forEach(k => {
-                        if (Math.random() > 0.5) {
+                        if (Math.random() > 0.45) {
                             const driftBias = (assetData[k].defaultDrift / 100) * 0.00006;
                             const volNoise = (Math.random() - 0.495) * (assetData[k].defaultVol / 100) * 0.0006;
                             assetData[k].price = Math.max(0.01, assetData[k].price * (1 + driftBias + volNoise));
@@ -1502,15 +1760,19 @@
                         document.getElementById('liveSpotPrice').textContent = formatPrice(curPrice);
                         TradingViewChartEngine.updateLiveTick(curPrice);
                         updateBreakEven();
+
+                        if (autoSimEnabled && activeChartEngine === 'MC') {
+                            runMonteCarlo();
+                        }
                     }
 
                     renderRibbon();
-                }, 2800);
+                }, 2600);
             }
         };
 
         // -------------------------------------------------------------
-        // 3. TRADINGVIEW LIGHTWEIGHT CHARTS INTEGRATION
+        // 3. TRADINGVIEW LIGHTWEIGHT CHARTS
         // -------------------------------------------------------------
         const TradingViewChartEngine = {
             chart: null,
@@ -1527,7 +1789,7 @@
                 container.innerHTML = '';
                 this.chart = LightweightCharts.createChart(container, {
                     layout: {
-                        background: { color: '#04060b' },
+                        background: { color: '#030508' },
                         textColor: '#94a3b8',
                         fontFamily: "'Azeret Mono', monospace",
                     },
@@ -1547,7 +1809,6 @@
                     },
                 });
 
-                // 1. Candlestick Series
                 this.candleSeries = this.chart.addCandlestickSeries({
                     upColor: '#00e676',
                     downColor: '#ff3366',
@@ -1557,7 +1818,6 @@
                     wickDownColor: '#ff3366',
                 });
 
-                // 2. Volume Histogram Series
                 this.volumeSeries = this.chart.addHistogramSeries({
                     color: 'rgba(0, 102, 255, 0.25)',
                     priceFormat: { type: 'volume' },
@@ -1567,14 +1827,12 @@
                     scaleMargins: { top: 0.82, bottom: 0 },
                 });
 
-                // 3. EMA 20 Overlay Line
                 this.ema20Series = this.chart.addLineSeries({
                     color: '#00e5ff',
                     lineWidth: 2,
                     title: 'EMA 20',
                 });
 
-                // 4. EMA 50 Overlay Line
                 this.ema50Series = this.chart.addLineSeries({
                     color: '#ffb300',
                     lineWidth: 2,
@@ -1594,7 +1852,6 @@
                 const ema20 = [];
                 const ema50 = [];
 
-                // Generate 90 days of synthetic calibrated historical bars
                 const days = 90;
                 let currentP = basePrice * (1 - (assetData[assetKey].defaultDrift / 100) * 0.25);
                 const now = new Date();
@@ -1623,7 +1880,6 @@
                 this.volumeSeries.setData(volumes);
                 this.latestCandle = { ...candles[candles.length - 1] };
 
-                // Calculate EMA 20 & EMA 50
                 const k20 = 2 / (20 + 1);
                 const k50 = 2 / (50 + 1);
                 let prevEma20 = candles[0].close;
@@ -1638,25 +1894,14 @@
 
                 this.ema20Series.setData(ema20);
                 this.ema50Series.setData(ema50);
-
-                // Update Technicals readouts
-                const lastEma20 = prevEma20;
-                const lastEma50 = prevEma50;
-                document.getElementById('tagEma20').textContent = `EMA 20: ${formatPrice(lastEma20)}`;
-                document.getElementById('tagEma50').textContent = `EMA 50: ${formatPrice(lastEma50)}`;
-                const rsiProxy = Math.min(85, Math.max(25, Math.round(50 + ((basePrice - lastEma20) / lastEma20) * 150)));
-                document.getElementById('tagRsi').textContent = `RSI(14): ${rsiProxy}`;
-
                 this.chart.timeScale().fitContent();
             },
 
             updateLiveTick(price) {
                 if (!this.candleSeries || !this.latestCandle) return;
-
                 this.latestCandle.close = price;
                 if (price > this.latestCandle.high) this.latestCandle.high = price;
                 if (price < this.latestCandle.low) this.latestCandle.low = price;
-
                 this.candleSeries.update(this.latestCandle);
             },
 
@@ -1677,8 +1922,6 @@
             const mcContainer = document.getElementById('simCanvasContainer');
             const tvContainer = document.getElementById('tvChartContainer');
             const mcPresets = document.getElementById('mcPresetsBar');
-            const mcControls = document.getElementById('mcControlsStrip');
-            const techStrip = document.getElementById('technicalsIndicatorsStrip');
 
             if (engine === 'TV') {
                 mcBtn.classList.remove('active');
@@ -1686,8 +1929,6 @@
                 mcContainer.style.display = 'none';
                 tvContainer.style.display = 'block';
                 mcPresets.style.display = 'none';
-                mcControls.style.display = 'none';
-                techStrip.style.display = 'flex';
 
                 if (!TradingViewChartEngine.chart) {
                     TradingViewChartEngine.init();
@@ -1701,8 +1942,6 @@
                 tvContainer.style.display = 'none';
                 mcContainer.style.display = 'block';
                 mcPresets.style.display = 'flex';
-                mcControls.style.display = 'flex';
-                techStrip.style.display = 'none';
 
                 resizeCanvas();
                 runMonteCarlo();
@@ -1710,8 +1949,269 @@
         }
 
         // -------------------------------------------------------------
-        // 4. TOP RIBBON RENDERING
+        // 4. ADVANCED QUANTITATIVE ENGINE (Fan Bands & Bell Curve)
         // -------------------------------------------------------------
+        function resizeCanvas() {
+            if (!canvas.offsetParent) return;
+            const rect = canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        window.addEventListener('resize', () => {
+            if (document.getElementById('terminal-view').classList.contains('active')) {
+                if (activeChartEngine === 'TV') {
+                    TradingViewChartEngine.resize();
+                } else {
+                    resizeCanvas();
+                    runMonteCarlo();
+                }
+            }
+        });
+
+        function randn() {
+            let u = 0, v = 0;
+            while (u === 0) u = Math.random();
+            while (v === 0) v = Math.random();
+            return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        }
+
+        function runMonteCarlo() {
+            const data = assetData[currentAsset];
+            const rect = canvas.getBoundingClientRect();
+            const W = rect.width;
+            const H = rect.height;
+            const paths = simPathsCount;
+            const days = parseInt(daysRange.value);
+            const sigma = parseInt(volRange.value) / 100;
+            const mu = parseInt(driftRange.value) / 100;
+            const dt = 1 / 365;
+
+            // Space reservation: 80% for timeline paths, right 20% for terminal density histogram bell curve
+            const histW = 85;
+            const simW = W - histW - 20;
+
+            ctx.clearRect(0, 0, W, H);
+
+            // Subtle Grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+            ctx.lineWidth = 1;
+            for (let y = 30; y < H; y += 40) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+            }
+
+            let terminalPrices = [];
+            let hitTargetCount = 0;
+            let hitStretchCount = 0;
+
+            // Extreme boundary scaling
+            const extremeUp = currentS0 * Math.exp(mu*(days/365) + sigma * Math.sqrt(days/365) * 3);
+            const extremeDown = currentS0 * Math.exp(mu*(days/365) - sigma * Math.sqrt(days/365) * 2.5);
+
+            const yMin = Math.max(0.0001, extremeDown * 0.75);
+            const yMax = extremeUp * 1.15;
+
+            function scaleY(val) { return H - ((val - yMin) / (yMax - yMin)) * (H - 50) - 25; }
+            function scaleX(d) { return (d / days) * (simW - 20) + 16; }
+
+            // Vertical divider separating stochastic paths from terminal density histogram
+            ctx.save();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(simW + 5, 10);
+            ctx.lineTo(simW + 5, H - 10);
+            ctx.stroke();
+            ctx.restore();
+
+            // Target benchmark horizontal line
+            const yTgt = scaleY(data.targetLine);
+            ctx.save();
+            ctx.strokeStyle = data.theme;
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath(); ctx.moveTo(0, yTgt); ctx.lineTo(W - 10, yTgt); ctx.stroke();
+            ctx.fillStyle = data.theme;
+            ctx.font = '10px "Azeret Mono", monospace';
+            ctx.fillText(`TARGET ${formatPrice(data.targetLine)}`, W - 80, yTgt - 4);
+            ctx.restore();
+
+            // Merton Jump parameters
+            const lambda = 4.0; // average 4 jumps per year
+            const jumpMean = -0.05;
+            const jumpVol = 0.15;
+
+            // Run stochastic paths
+            for (let i = 0; i < paths; i++) {
+                let p = currentS0;
+                let hitTgt = false;
+                let hitStr = false;
+
+                ctx.beginPath();
+                ctx.moveTo(scaleX(0), scaleY(p));
+
+                for (let d = 1; d <= days; d++) {
+                    const z = randn();
+                    let jumpFactor = 0;
+
+                    if (mertonJumpEnabled && Math.random() < lambda * dt) {
+                        jumpFactor = jumpMean + jumpVol * randn();
+                    }
+
+                    p = p * Math.exp((mu - 0.5 * sigma * sigma) * dt + sigma * Math.sqrt(dt) * z + jumpFactor);
+                    if (p >= data.targetLine) hitTgt = true;
+                    if (p >= data.stretchLine) hitStr = true;
+                    ctx.lineTo(scaleX(d), scaleY(p));
+                }
+                terminalPrices.push(p);
+                if (hitTgt) hitTargetCount++;
+                if (hitStr) hitStretchCount++;
+
+                ctx.strokeStyle = hitTgt ? 'rgba(0, 229, 255, 0.045)' : 'rgba(0, 102, 255, 0.022)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+
+            terminalPrices.sort((a, b) => a - b);
+            const p10 = terminalPrices[Math.floor(paths * 0.10)];
+            const p50 = terminalPrices[Math.floor(paths * 0.50)];
+            const p90 = terminalPrices[Math.floor(paths * 0.90)];
+            const p95 = terminalPrices[Math.floor(paths * 0.95)];
+
+            // Shaded 10th-90th Quantile Confidence Cloud
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(scaleX(0), scaleY(currentS0));
+            for (let d = 1; d <= days; d++) {
+                const driftTerm = (mu - 0.5 * sigma * sigma) * (d * dt);
+                const upperP = currentS0 * Math.exp(driftTerm + sigma * Math.sqrt(d * dt) * 1.28);
+                ctx.lineTo(scaleX(d), scaleY(upperP));
+            }
+            for (let d = days; d >= 1; d--) {
+                const driftTerm = (mu - 0.5 * sigma * sigma) * (d * dt);
+                const lowerP = currentS0 * Math.exp(driftTerm - sigma * Math.sqrt(d * dt) * 1.28);
+                ctx.lineTo(scaleX(d), scaleY(lowerP));
+            }
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0, 102, 255, 0.07)';
+            ctx.fill();
+            ctx.restore();
+
+            // Expected 50th percentile median trajectory
+            ctx.save();
+            ctx.strokeStyle = '#00e5ff';
+            ctx.lineWidth = 2.5;
+            ctx.shadowColor = '#00e5ff';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.moveTo(scaleX(0), scaleY(currentS0));
+            let medP = currentS0;
+            for (let d = 1; d <= days; d++) {
+                medP = medP * Math.exp((mu - 0.5 * sigma * sigma) * dt);
+                ctx.lineTo(scaleX(d), scaleY(medP));
+            }
+            ctx.stroke();
+            ctx.restore();
+
+            // -------------------------------------------------------------
+            // RIGHT-SIDE TERMINAL DENSITY BELL CURVE / HISTOGRAM
+            // -------------------------------------------------------------
+            const binsCount = 28;
+            const binSize = (yMax - yMin) / binsCount;
+            const bins = new Array(binsCount).fill(0);
+
+            terminalPrices.forEach(p => {
+                const bIdx = Math.min(binsCount - 1, Math.max(0, Math.floor((p - yMin) / binSize)));
+                bins[bIdx]++;
+            });
+
+            const maxBinCount = Math.max(...bins);
+            const histStartX = simW + 12;
+
+            for (let b = 0; b < binsCount; b++) {
+                const binPrice = yMin + (b + 0.5) * binSize;
+                const binY = scaleY(binPrice);
+                const binHeight = Math.max(3, (H / binsCount) * 0.85);
+                const binBarWidth = (bins[b] / maxBinCount) * (histW - 20);
+
+                const isProfitZone = binPrice >= data.targetLine;
+                ctx.fillStyle = isProfitZone ? 'rgba(0, 230, 118, 0.45)' : 'rgba(0, 102, 255, 0.3)';
+                ctx.fillRect(histStartX, binY - binHeight / 2, binBarWidth, binHeight);
+            }
+
+            // Target Probability Readouts
+            probTarget.textContent = ((hitTargetCount / paths) * 100).toFixed(1) + '%';
+            probStretch.textContent = ((hitStretchCount / paths) * 100).toFixed(1) + '%';
+            document.getElementById('p50Val').textContent = formatPrice(p50);
+            document.getElementById('p95Val').textContent = formatPrice(p95);
+        }
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const simW = rect.width - 105;
+            const days = parseInt(daysRange.value);
+            const dayHover = Math.min(days, Math.max(0, Math.round((mouseX / simW) * days)));
+            const sigma = parseInt(volRange.value) / 100;
+            const mu = parseInt(driftRange.value) / 100;
+            const dt = 1 / 365;
+            const estP = currentS0 * Math.exp((mu - 0.5 * sigma * sigma) * (dayHover * dt));
+
+            hoverInspectBox.innerHTML = `
+                <span>Day <strong>${dayHover}</strong> of ${days}</span>
+                <span>Median: <strong>${formatPrice(estP)}</strong></span>
+            `;
+        });
+
+        // -------------------------------------------------------------
+        // 5. BREAK-EVEN CALCULATOR & RIBBON
+        // -------------------------------------------------------------
+        function updateBreakEven() {
+            const data = assetData[currentAsset];
+            const basis = parseFloat(costBasisInput.value) || data.costBasis;
+            const shares = parseFloat(sharesInput.value) || data.shares;
+
+            const currentDiff = currentS0 - basis;
+            const currentPct = (currentDiff / basis) * 100;
+            const totalDollarDiff = currentDiff * shares;
+
+            const pnlHero = document.getElementById('currentPnl');
+            pnlHero.textContent = `${totalDollarDiff >= 0 ? '+' : '-'}$${Math.abs(totalDollarDiff).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${currentPct.toFixed(2)}%)`;
+            pnlHero.style.color = totalDollarDiff >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)';
+
+            const dist = ((basis - currentS0) / currentS0) * 100;
+            document.getElementById('distToBE').textContent = dist > 0 
+                ? `Requires +${dist.toFixed(2)}% push from current spot (${formatPrice(currentS0)}) to Parity (${formatPrice(basis)})`
+                : `Currently in profit by +${Math.abs(dist).toFixed(2)}% above entry base!`;
+
+            const tbody = document.getElementById('matrixBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td style="font-weight: 700; color: var(--brand-cyan);">Current Spot</td>
+                    <td>${formatPrice(currentS0)}</td>
+                    <td style="color: ${currentPct >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight:700;">${currentPct >= 0 ? '+' : ''}${currentPct.toFixed(1)}%</td>
+                    <td style="color: ${totalDollarDiff >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight:700;">${totalDollarDiff >= 0 ? '+' : '-'}$${Math.abs(totalDollarDiff).toLocaleString('en-US', {maximumFractionDigits:0})}</td>
+                </tr>
+            `;
+
+            data.stages.forEach(st => {
+                const gainPct = ((st.price - basis) / basis) * 100;
+                const netPnl = (st.price - basis) * shares;
+                const tr = document.createElement('tr');
+                if (Math.abs(st.price - basis) < 0.0001) tr.style.background = 'rgba(255, 179, 0, 0.08)';
+
+                tr.innerHTML = `
+                    <td style="font-weight: 600; color: ${Math.abs(st.price - basis) < 0.0001 ? 'var(--brand-amber)' : 'var(--text-primary)'};">${st.label}</td>
+                    <td>${formatPrice(st.price)}</td>
+                    <td style="color: ${gainPct >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight: 700;">${gainPct >= 0 ? '+' : ''}${gainPct.toFixed(1)}%</td>
+                    <td style="color: ${netPnl >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight: 700;">${netPnl >= 0 ? '+' : '-'}$${Math.abs(netPnl).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
         function renderRibbon() {
             const track = document.getElementById('ribbonTrack');
             track.innerHTML = '';
@@ -1736,7 +2236,7 @@
         }
 
         // -------------------------------------------------------------
-        // 5. UI CONTROLLERS & DATA BINDING
+        // 6. UI CONTROLLERS & COMPARISON
         // -------------------------------------------------------------
         const canvas = document.getElementById('simCanvas');
         const ctx = canvas.getContext('2d');
@@ -1752,7 +2252,6 @@
         const probStretch = document.getElementById('probStretch');
         const hoverInspectBox = document.getElementById('hoverInspectBox');
 
-        // Navigation Tabs
         document.querySelectorAll('.nav-pill').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
@@ -1772,7 +2271,6 @@
             });
         });
 
-        // Timeframe Presets
         document.querySelectorAll('#timeframePresets .segment-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('#timeframePresets .segment-btn').forEach(b => b.classList.remove('active'));
@@ -1784,13 +2282,11 @@
             });
         });
 
-        // Paths Presets
         document.querySelectorAll('#pathsPresets .segment-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('#pathsPresets .segment-btn').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 simPathsCount = parseInt(e.target.getAttribute('data-paths'));
-                document.getElementById('pathsBadge').textContent = simPathsCount.toLocaleString() + ' PATHS';
                 runMonteCarlo();
             });
         });
@@ -1800,9 +2296,8 @@
             const data = assetData[key];
             currentS0 = data.price;
 
-            // Header Meta
             document.getElementById('assetBadge').textContent = data.logo;
-            document.getElementById('assetBadge').style.background = `linear-gradient(135deg, ${data.theme}, #0b0f19)`;
+            document.getElementById('assetBadge').style.background = `linear-gradient(135deg, ${data.theme}, #090d16)`;
             document.getElementById('assetTicker').textContent = data.ticker;
             document.getElementById('assetFullTitle').textContent = data.name;
             document.getElementById('assetClassTag').textContent = data.classType;
@@ -1811,7 +2306,6 @@
             document.getElementById('liveSpotDelta').textContent = data.change + ' (30D)';
             document.getElementById('oracleSourceLabel').textContent = `${data.source} • AUTO-SYNC`;
 
-            // Sliders
             volRange.value = data.defaultVol;
             driftRange.value = data.defaultDrift;
             daysRange.value = data.defaultDays;
@@ -1823,7 +2317,6 @@
                 b.classList.toggle('active', b.getAttribute('data-days') == data.defaultDays);
             });
 
-            // Analytics
             costBasisInput.value = data.costBasis;
             sharesInput.value = data.shares;
             document.getElementById('beTitle').textContent = `Analytics (${formatPrice(data.costBasis)} Basis)`;
@@ -1881,195 +2374,6 @@
             if (active) active.click();
         }
 
-        // -------------------------------------------------------------
-        // 6. MONTE CARLO SIMULATION (Geometric Brownian Motion)
-        // -------------------------------------------------------------
-        function resizeCanvas() {
-            if (!canvas.offsetParent) return;
-            const rect = canvas.getBoundingClientRect();
-            const dpr = window.devicePixelRatio || 1;
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        }
-
-        window.addEventListener('resize', () => {
-            if (document.getElementById('terminal-view').classList.contains('active')) {
-                if (activeChartEngine === 'TV') {
-                    TradingViewChartEngine.resize();
-                } else {
-                    resizeCanvas();
-                    runMonteCarlo();
-                }
-            }
-        });
-
-        function randn() {
-            let u = 0, v = 0;
-            while (u === 0) u = Math.random();
-            while (v === 0) v = Math.random();
-            return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-        }
-
-        function runMonteCarlo() {
-            const data = assetData[currentAsset];
-            const rect = canvas.getBoundingClientRect();
-            const W = rect.width;
-            const H = rect.height;
-            const paths = simPathsCount;
-            const days = parseInt(daysRange.value);
-            const sigma = parseInt(volRange.value) / 100;
-            const mu = parseInt(driftRange.value) / 100;
-            const dt = 1 / 365;
-
-            ctx.clearRect(0, 0, W, H);
-
-            // Subtle dark grid
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
-            ctx.lineWidth = 1;
-            for (let y = 30; y < H; y += 40) {
-                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-            }
-
-            let terminalPrices = [];
-            let hitTargetCount = 0;
-            let hitStretchCount = 0;
-
-            const extremeUp = currentS0 * Math.exp(mu*(days/365) + sigma * Math.sqrt(days/365) * 3);
-            const extremeDown = currentS0 * Math.exp(mu*(days/365) - sigma * Math.sqrt(days/365) * 2.5);
-
-            const yMin = Math.max(0.0001, extremeDown * 0.75);
-            const yMax = extremeUp * 1.15;
-
-            function scaleY(val) { return H - ((val - yMin) / (yMax - yMin)) * (H - 45) - 22; }
-            function scaleX(d) { return (d / days) * (W - 60) + 16; }
-
-            // Target benchmark line
-            const yTgt = scaleY(data.targetLine);
-            ctx.save();
-            ctx.strokeStyle = data.theme;
-            ctx.lineWidth = 1.5;
-            ctx.setLineDash([4, 4]);
-            ctx.beginPath(); ctx.moveTo(0, yTgt); ctx.lineTo(W - 55, yTgt); ctx.stroke();
-            ctx.fillStyle = data.theme;
-            ctx.font = '10px "Azeret Mono", monospace';
-            ctx.fillText(`TARGET ${formatPrice(data.targetLine)}`, W - 80, yTgt - 4);
-            ctx.restore();
-
-            for (let i = 0; i < paths; i++) {
-                let p = currentS0;
-                let hitTgt = false;
-                let hitStr = false;
-
-                ctx.beginPath();
-                ctx.moveTo(scaleX(0), scaleY(p));
-
-                for (let d = 1; d <= days; d++) {
-                    const z = randn();
-                    p = p * Math.exp((mu - 0.5 * sigma * sigma) * dt + sigma * Math.sqrt(dt) * z);
-                    if (p >= data.targetLine) hitTgt = true;
-                    if (p >= data.stretchLine) hitStr = true;
-                    ctx.lineTo(scaleX(d), scaleY(p));
-                }
-                terminalPrices.push(p);
-                if (hitTgt) hitTargetCount++;
-                if (hitStr) hitStretchCount++;
-
-                ctx.strokeStyle = hitTgt ? 'rgba(0, 229, 255, 0.045)' : 'rgba(0, 102, 255, 0.025)';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            }
-
-            terminalPrices.sort((a, b) => a - b);
-            const p50 = terminalPrices[Math.floor(paths * 0.50)];
-            const p95 = terminalPrices[Math.floor(paths * 0.95)];
-
-            probTarget.textContent = ((hitTargetCount / paths) * 100).toFixed(1) + '%';
-            probStretch.textContent = ((hitStretchCount / paths) * 100).toFixed(1) + '%';
-            document.getElementById('p50Val').textContent = formatPrice(p50);
-            document.getElementById('p95Val').textContent = formatPrice(p95);
-
-            // Median path highlight
-            ctx.save();
-            ctx.strokeStyle = '#00e5ff';
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            ctx.moveTo(scaleX(0), scaleY(currentS0));
-            let medP = currentS0;
-            for (let d = 1; d <= days; d++) {
-                medP = medP * Math.exp((mu - 0.5 * sigma * sigma) * dt);
-                ctx.lineTo(scaleX(d), scaleY(medP));
-            }
-            ctx.stroke();
-            ctx.restore();
-        }
-
-        canvas.addEventListener('mousemove', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const days = parseInt(daysRange.value);
-            const dayHover = Math.min(days, Math.max(0, Math.round((mouseX / rect.width) * days)));
-            const sigma = parseInt(volRange.value) / 100;
-            const mu = parseInt(driftRange.value) / 100;
-            const dt = 1 / 365;
-            const estP = currentS0 * Math.exp((mu - 0.5 * sigma * sigma) * (dayHover * dt));
-
-            hoverInspectBox.innerHTML = `
-                <span>Day <strong>${dayHover}</strong> of ${days}</span>
-                <span>Median: <strong>${formatPrice(estP)}</strong></span>
-            `;
-        });
-
-        // -------------------------------------------------------------
-        // 7. BREAK-EVEN CALCULATOR
-        // -------------------------------------------------------------
-        function updateBreakEven() {
-            const data = assetData[currentAsset];
-            const basis = parseFloat(costBasisInput.value) || data.costBasis;
-            const shares = parseFloat(sharesInput.value) || data.shares;
-
-            const currentDiff = currentS0 - basis;
-            const currentPct = (currentDiff / basis) * 100;
-            const totalDollarDiff = currentDiff * shares;
-
-            const pnlHero = document.getElementById('currentPnl');
-            pnlHero.textContent = `${totalDollarDiff >= 0 ? '+' : '-'}$${Math.abs(totalDollarDiff).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${currentPct.toFixed(2)}%)`;
-            pnlHero.style.color = totalDollarDiff >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)';
-
-            const dist = ((basis - currentS0) / currentS0) * 100;
-            document.getElementById('distToBE').textContent = dist > 0 
-                ? `Requires +${dist.toFixed(2)}% push from current spot (${formatPrice(currentS0)}) to Parity (${formatPrice(basis)})`
-                : `Currently in profit by +${Math.abs(dist).toFixed(2)}% above entry base!`;
-
-            const tbody = document.getElementById('matrixBody');
-            tbody.innerHTML = `
-                <tr>
-                    <td style="font-weight: 700; color: var(--brand-cyan);">Current Spot</td>
-                    <td>${formatPrice(currentS0)}</td>
-                    <td style="color: ${currentPct >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight:700;">${currentPct >= 0 ? '+' : ''}${currentPct.toFixed(1)}%</td>
-                    <td style="color: ${totalDollarDiff >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight:700;">${totalDollarDiff >= 0 ? '+' : '-'}$${Math.abs(totalDollarDiff).toLocaleString('en-US', {maximumFractionDigits:0})}</td>
-                </tr>
-            `;
-
-            data.stages.forEach(st => {
-                const gainPct = ((st.price - basis) / basis) * 100;
-                const netPnl = (st.price - basis) * shares;
-                const tr = document.createElement('tr');
-                if (Math.abs(st.price - basis) < 0.0001) tr.style.background = 'rgba(255, 179, 0, 0.08)';
-
-                tr.innerHTML = `
-                    <td style="font-weight: 600; color: ${Math.abs(st.price - basis) < 0.0001 ? 'var(--brand-amber)' : 'var(--text-primary)'};">${st.label}</td>
-                    <td>${formatPrice(st.price)}</td>
-                    <td style="color: ${gainPct >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight: 700;">${gainPct >= 0 ? '+' : ''}${gainPct.toFixed(1)}%</td>
-                    <td style="color: ${netPnl >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight: 700;">${netPnl >= 0 ? '+' : '-'}$${Math.abs(netPnl).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // -------------------------------------------------------------
-        // 8. COMPARATIVE VIEW
-        // -------------------------------------------------------------
         function renderComparison() {
             const tbody = document.getElementById('comparisonTableBody');
             const cardsContainer = document.getElementById('comparisonCardsContainer');
@@ -2132,9 +2436,15 @@
             });
         }
 
-        // -------------------------------------------------------------
-        // 9. EVENT LISTENERS & STARTUP
-        // -------------------------------------------------------------
+        // Deploy Modal Toggle
+        function toggleDeployModal(show) {
+            document.getElementById('deployModal').classList.toggle('active', show);
+        }
+        function closeDeployModal(e) {
+            if (e.target.id === 'deployModal') toggleDeployModal(false);
+        }
+
+        // Event Listeners
         volRange.addEventListener('input', (e) => { volReadout.textContent = e.target.value + '%'; if (activeChartEngine === 'MC') runMonteCarlo(); });
         driftRange.addEventListener('input', (e) => { driftReadout.textContent = (e.target.value >= 0 ? '+' : '') + e.target.value + '%'; if (activeChartEngine === 'MC') runMonteCarlo(); });
         daysRange.addEventListener('input', (e) => { 
