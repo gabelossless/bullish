@@ -421,7 +421,6 @@
         /* ----------------------------------------------------
            5. ADVANCED AUTOMATED SIMULATION ENGINE
         ---------------------------------------------------- */
-        /* Macro Scenario Engine Bar (1-Click Automation) */
         .scenario-engine-bar {
             display: flex;
             align-items: center;
@@ -461,7 +460,6 @@
             box-shadow: 0 0 14px rgba(0, 229, 255, 0.25);
         }
 
-        /* Stochastic Model Toggles */
         .engine-config-bar {
             display: flex;
             align-items: center;
@@ -519,7 +517,6 @@
             transform: translateX(14px);
         }
 
-        /* Chart Viewport Stage */
         .chart-engine-toggle-bar {
             display: flex;
             align-items: center;
@@ -871,7 +868,7 @@
         }
 
         /* ----------------------------------------------------
-           8. MODAL / DIALOGS (Deploy Guide)
+           8. MODAL (Deploy Guide)
         ---------------------------------------------------- */
         .modal-overlay {
             position: fixed;
@@ -1079,16 +1076,16 @@
                 AUTOMATED SCENARIO PRESETS (1-CLICK CALIBRATION)
             </div>
             <div class="scenario-engine-bar">
-                <div class="scenario-chip active" onclick="applyMacroScenario('BASE')">
+                <div class="scenario-chip active" onclick="applyMacroScenario(event, 'BASE')">
                     <span>⚖️ Base Consensus</span>
                 </div>
-                <div class="scenario-chip" onclick="applyMacroScenario('BULL')">
+                <div class="scenario-chip" onclick="applyMacroScenario(event, 'BULL')">
                     <span>🚀 Institutional Expansion (+2.5σ)</span>
                 </div>
-                <div class="scenario-chip" onclick="applyMacroScenario('REVERT')">
+                <div class="scenario-chip" onclick="applyMacroScenario(event, 'REVERT')">
                     <span>🔄 Mean Reversion / Low Vol</span>
                 </div>
-                <div class="scenario-chip" onclick="applyMacroScenario('SHOCK')">
+                <div class="scenario-chip" onclick="applyMacroScenario(event, 'SHOCK')">
                     <span>⚠️ Liquidity Stress Shock (-2.0σ)</span>
                 </div>
             </div>
@@ -1503,6 +1500,23 @@
         let autoSimEnabled = true;
         let mertonJumpEnabled = false;
 
+        // -------------------------------------------------------------
+        // TOP-LEVEL DOM ELEMENT REFERENCES (Declared First To Avoid TDZ)
+        // -------------------------------------------------------------
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas ? canvas.getContext('2d') : null;
+        const volRange = document.getElementById('volRange');
+        const driftRange = document.getElementById('driftRange');
+        const daysRange = document.getElementById('daysRange');
+        const volReadout = document.getElementById('volReadout');
+        const driftReadout = document.getElementById('driftReadout');
+        const daysReadout = document.getElementById('daysReadout');
+        const costBasisInput = document.getElementById('costBasis');
+        const sharesInput = document.getElementById('sharesCount');
+        const probTarget = document.getElementById('probTarget');
+        const probStretch = document.getElementById('probStretch');
+        const hoverInspectBox = document.getElementById('hoverInspectBox');
+
         function formatPrice(val) {
             if (val < 0.1) return '$' + val.toFixed(4);
             if (val < 10) return '$' + val.toFixed(2);
@@ -1512,9 +1526,11 @@
         // -------------------------------------------------------------
         // AUTOMATED SCENARIO ENGINE (1-Click Presets)
         // -------------------------------------------------------------
-        function applyMacroScenario(scenario) {
+        function applyMacroScenario(evt, scenario) {
             document.querySelectorAll('.scenario-chip').forEach(c => c.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.classList.add('active');
+            }
 
             const baseVol = assetData[currentAsset].defaultVol;
             const baseDrift = assetData[currentAsset].defaultDrift;
@@ -1522,31 +1538,35 @@
             if (scenario === 'BASE') {
                 animateSliders(baseVol, baseDrift, 90);
                 mertonJumpEnabled = false;
-                document.getElementById('mertonJumpToggle').checked = false;
+                const mToggle = document.getElementById('mertonJumpToggle');
+                if (mToggle) mToggle.checked = false;
             } else if (scenario === 'BULL') {
                 animateSliders(Math.round(baseVol * 1.25), Math.round(Math.max(45, baseDrift * 1.8)), 90);
                 mertonJumpEnabled = false;
-                document.getElementById('mertonJumpToggle').checked = false;
+                const mToggle = document.getElementById('mertonJumpToggle');
+                if (mToggle) mToggle.checked = false;
             } else if (scenario === 'REVERT') {
                 animateSliders(Math.round(baseVol * 0.7), 0, 90);
                 mertonJumpEnabled = false;
-                document.getElementById('mertonJumpToggle').checked = false;
+                const mToggle = document.getElementById('mertonJumpToggle');
+                if (mToggle) mToggle.checked = false;
             } else if (scenario === 'SHOCK') {
                 animateSliders(Math.round(baseVol * 1.6), -35, 90);
                 mertonJumpEnabled = true;
-                document.getElementById('mertonJumpToggle').checked = true;
+                const mToggle = document.getElementById('mertonJumpToggle');
+                if (mToggle) mToggle.checked = true;
             }
 
             runMonteCarlo();
         }
 
         function animateSliders(targetVol, targetDrift, targetDays) {
-            volRange.value = targetVol;
-            driftRange.value = targetDrift;
-            daysRange.value = targetDays;
-            volReadout.textContent = targetVol + '%';
-            driftReadout.textContent = (targetDrift >= 0 ? '+' : '') + targetDrift + '%';
-            daysReadout.textContent = targetDays + ' Days';
+            if (volRange) volRange.value = targetVol;
+            if (driftRange) driftRange.value = targetDrift;
+            if (daysRange) daysRange.value = targetDays;
+            if (volReadout) volReadout.textContent = targetVol + '%';
+            if (driftReadout) driftReadout.textContent = (targetDrift >= 0 ? '+' : '') + targetDrift + '%';
+            if (daysReadout) daysReadout.textContent = targetDays + ' Days';
         }
 
         function toggleAutoSim(val) {
@@ -1623,7 +1643,8 @@
                     this.okxWS.onmessage = (event) => {
                         if (event.data === 'pong') {
                             const pingMs = Math.round(performance.now() - this.lastPingTime);
-                            document.getElementById('wsLatencyBadge').textContent = `WS PING: ${pingMs}ms`;
+                            const badge = document.getElementById('wsLatencyBadge');
+                            if (badge) badge.textContent = `WS PING: ${pingMs}ms`;
                             return;
                         }
 
@@ -1655,9 +1676,12 @@
                 const dot = document.getElementById('wsConnectionDot');
 
                 if (isCbOpen || isOkxOpen) {
-                    dot.style.background = 'var(--brand-emerald)';
-                    dot.style.boxShadow = '0 0 12px var(--brand-emerald)';
-                    document.getElementById('dockStatus').textContent = `AUTO-SIMULATION ENGINE ACTIVE • COINBASE & OKX STREAMING`;
+                    if (dot) {
+                        dot.style.background = 'var(--brand-emerald)';
+                        dot.style.boxShadow = '0 0 12px var(--brand-emerald)';
+                    }
+                    const dock = document.getElementById('dockStatus');
+                    if (dock) dock.textContent = `AUTO-SIMULATION ENGINE ACTIVE • COINBASE & OKX STREAMING`;
                 }
             },
 
@@ -1665,7 +1689,8 @@
                 setInterval(() => {
                     const tps = this.tickCount;
                     this.tickCount = 0;
-                    document.getElementById('wsThroughputBadge').textContent = `${Math.max(1, tps)} TICKS/SEC`;
+                    const b = document.getElementById('wsThroughputBadge');
+                    if (b) b.textContent = `${Math.max(1, tps)} TICKS/SEC`;
                 }, 1000);
             }
         };
@@ -1676,7 +1701,7 @@
         const MarketOracle = {
             async fetchRealTimeData(isManual = false) {
                 const tsEl = document.getElementById('oracleTimestamp');
-                tsEl.textContent = 'Syncing REST endpoints...';
+                if (tsEl) tsEl.textContent = 'Syncing REST endpoints...';
 
                 const [yahooBull, yahooHood, yahooCoin] = await Promise.all([
                     this.fetchYahooProxy('BULL'),
@@ -1689,19 +1714,22 @@
                 if (yahooCoin && yahooCoin > 0) this.applyLivePrice('COIN', yahooCoin, 'Yahoo Finance Proxy');
 
                 const timeStr = new Date().toLocaleTimeString();
-                tsEl.textContent = `Live Stream • ${timeStr}`;
+                if (tsEl) tsEl.textContent = `Live Stream • ${timeStr}`;
 
                 if (isManual) {
                     LiveWebSockets.init();
                     const status = document.getElementById('dockStatus');
-                    status.textContent = 'ORACLE REFRESHED: WEBSOCKETS RE-CONNECTED';
-                    setTimeout(() => {
-                        status.textContent = 'AUTO-SIMULATION ENGINE ACTIVE • COINBASE & OKX STREAMING';
-                    }, 3000);
+                    if (status) {
+                        status.textContent = 'ORACLE REFRESHED: WEBSOCKETS RE-CONNECTED';
+                        setTimeout(() => {
+                            status.textContent = 'AUTO-SIMULATION ENGINE ACTIVE • COINBASE & OKX STREAMING';
+                        }, 3000);
+                    }
                 }
 
                 renderRibbon();
-                if (document.getElementById('comparison-view').classList.contains('active')) {
+                const compView = document.getElementById('comparison-view');
+                if (compView && compView.classList.contains('active')) {
                     renderComparison();
                 }
             },
@@ -1717,6 +1745,7 @@
             },
 
             applyLivePrice(key, price, source) {
+                if (!assetData[key]) return;
                 const old = assetData[key].price;
                 assetData[key].price = price;
                 assetData[key].source = source;
@@ -1724,20 +1753,20 @@
                 if (key === currentAsset) {
                     currentS0 = price;
                     const priceEl = document.getElementById('liveSpotPrice');
-                    priceEl.textContent = formatPrice(price);
-
-                    if (price > old) {
-                        priceEl.classList.add('flash-up');
-                        setTimeout(() => priceEl.classList.remove('flash-up'), 500);
-                    } else if (price < old) {
-                        priceEl.classList.add('flash-down');
-                        setTimeout(() => priceEl.classList.remove('flash-down'), 500);
+                    if (priceEl) {
+                        priceEl.textContent = formatPrice(price);
+                        if (price > old) {
+                            priceEl.classList.add('flash-up');
+                            setTimeout(() => priceEl.classList.remove('flash-up'), 500);
+                        } else if (price < old) {
+                            priceEl.classList.add('flash-down');
+                            setTimeout(() => priceEl.classList.remove('flash-down'), 500);
+                        }
                     }
 
                     TradingViewChartEngine.updateLiveTick(price);
                     updateBreakEven();
 
-                    // Automated Stochastic Ripple on Market Ticks
                     if (autoSimEnabled && activeChartEngine === 'MC') {
                         runMonteCarlo();
                     }
@@ -1754,10 +1783,12 @@
                         }
                     });
 
-                    if (document.getElementById('terminal-view').classList.contains('active')) {
+                    const termView = document.getElementById('terminal-view');
+                    if (termView && termView.classList.contains('active')) {
                         const curPrice = assetData[currentAsset].price;
                         currentS0 = curPrice;
-                        document.getElementById('liveSpotPrice').textContent = formatPrice(curPrice);
+                        const priceEl = document.getElementById('liveSpotPrice');
+                        if (priceEl) priceEl.textContent = formatPrice(curPrice);
                         TradingViewChartEngine.updateLiveTick(curPrice);
                         updateBreakEven();
 
@@ -1924,11 +1955,11 @@
             const mcPresets = document.getElementById('mcPresetsBar');
 
             if (engine === 'TV') {
-                mcBtn.classList.remove('active');
-                tvBtn.classList.add('active');
-                mcContainer.style.display = 'none';
-                tvContainer.style.display = 'block';
-                mcPresets.style.display = 'none';
+                if (mcBtn) mcBtn.classList.remove('active');
+                if (tvBtn) tvBtn.classList.add('active');
+                if (mcContainer) mcContainer.style.display = 'none';
+                if (tvContainer) tvContainer.style.display = 'block';
+                if (mcPresets) mcPresets.style.display = 'none';
 
                 if (!TradingViewChartEngine.chart) {
                     TradingViewChartEngine.init();
@@ -1937,11 +1968,11 @@
                     TradingViewChartEngine.resize();
                 }
             } else {
-                tvBtn.classList.remove('active');
-                mcBtn.classList.add('active');
-                tvContainer.style.display = 'none';
-                mcContainer.style.display = 'block';
-                mcPresets.style.display = 'flex';
+                if (tvBtn) tvBtn.classList.remove('active');
+                if (mcBtn) mcBtn.classList.add('active');
+                if (tvContainer) tvContainer.style.display = 'none';
+                if (mcContainer) mcContainer.style.display = 'block';
+                if (mcPresets) mcPresets.style.display = 'flex';
 
                 resizeCanvas();
                 runMonteCarlo();
@@ -1952,16 +1983,19 @@
         // 4. ADVANCED QUANTITATIVE ENGINE (Fan Bands & Bell Curve)
         // -------------------------------------------------------------
         function resizeCanvas() {
-            if (!canvas.offsetParent) return;
+            if (!canvas || !ctx) return;
             const rect = canvas.getBoundingClientRect();
+            const w = rect.width || canvas.clientWidth || 800;
+            const h = rect.height || canvas.clientHeight || 380;
             const dpr = window.devicePixelRatio || 1;
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
 
         window.addEventListener('resize', () => {
-            if (document.getElementById('terminal-view').classList.contains('active')) {
+            const termView = document.getElementById('terminal-view');
+            if (termView && termView.classList.contains('active')) {
                 if (activeChartEngine === 'TV') {
                     TradingViewChartEngine.resize();
                 } else {
@@ -1979,19 +2013,21 @@
         }
 
         function runMonteCarlo() {
+            if (!canvas || !ctx) return;
             const data = assetData[currentAsset];
+            if (!data) return;
+
             const rect = canvas.getBoundingClientRect();
-            const W = rect.width;
-            const H = rect.height;
+            const W = rect.width || canvas.clientWidth || 800;
+            const H = rect.height || canvas.clientHeight || 380;
             const paths = simPathsCount;
-            const days = parseInt(daysRange.value);
-            const sigma = parseInt(volRange.value) / 100;
-            const mu = parseInt(driftRange.value) / 100;
+            const days = parseInt(daysRange ? daysRange.value : 90) || 90;
+            const sigma = parseInt(volRange ? volRange.value : 62) / 100;
+            const mu = parseInt(driftRange ? driftRange.value : 28) / 100;
             const dt = 1 / 365;
 
-            // Space reservation: 80% for timeline paths, right 20% for terminal density histogram bell curve
             const histW = 85;
-            const simW = W - histW - 20;
+            const simW = Math.max(100, W - histW - 20);
 
             ctx.clearRect(0, 0, W, H);
 
@@ -2006,7 +2042,6 @@
             let hitTargetCount = 0;
             let hitStretchCount = 0;
 
-            // Extreme boundary scaling
             const extremeUp = currentS0 * Math.exp(mu*(days/365) + sigma * Math.sqrt(days/365) * 3);
             const extremeDown = currentS0 * Math.exp(mu*(days/365) - sigma * Math.sqrt(days/365) * 2.5);
 
@@ -2016,7 +2051,7 @@
             function scaleY(val) { return H - ((val - yMin) / (yMax - yMin)) * (H - 50) - 25; }
             function scaleX(d) { return (d / days) * (simW - 20) + 16; }
 
-            // Vertical divider separating stochastic paths from terminal density histogram
+            // Vertical divider
             ctx.save();
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
             ctx.setLineDash([3, 3]);
@@ -2026,7 +2061,7 @@
             ctx.stroke();
             ctx.restore();
 
-            // Target benchmark horizontal line
+            // Target benchmark line
             const yTgt = scaleY(data.targetLine);
             ctx.save();
             ctx.strokeStyle = data.theme;
@@ -2038,12 +2073,10 @@
             ctx.fillText(`TARGET ${formatPrice(data.targetLine)}`, W - 80, yTgt - 4);
             ctx.restore();
 
-            // Merton Jump parameters
-            const lambda = 4.0; // average 4 jumps per year
+            const lambda = 4.0;
             const jumpMean = -0.05;
             const jumpVol = 0.15;
 
-            // Run stochastic paths
             for (let i = 0; i < paths; i++) {
                 let p = currentS0;
                 let hitTgt = false;
@@ -2075,10 +2108,8 @@
             }
 
             terminalPrices.sort((a, b) => a - b);
-            const p10 = terminalPrices[Math.floor(paths * 0.10)];
-            const p50 = terminalPrices[Math.floor(paths * 0.50)];
-            const p90 = terminalPrices[Math.floor(paths * 0.90)];
-            const p95 = terminalPrices[Math.floor(paths * 0.95)];
+            const p50 = terminalPrices[Math.floor(paths * 0.50)] || currentS0;
+            const p95 = terminalPrices[Math.floor(paths * 0.95)] || currentS0;
 
             // Shaded 10th-90th Quantile Confidence Cloud
             ctx.save();
@@ -2115,9 +2146,7 @@
             ctx.stroke();
             ctx.restore();
 
-            // -------------------------------------------------------------
-            // RIGHT-SIDE TERMINAL DENSITY BELL CURVE / HISTOGRAM
-            // -------------------------------------------------------------
+            // Right-side Terminal Density Bell Curve / Histogram
             const binsCount = 28;
             const binSize = (yMax - yMin) / binsCount;
             const bins = new Array(binsCount).fill(0);
@@ -2127,7 +2156,7 @@
                 bins[bIdx]++;
             });
 
-            const maxBinCount = Math.max(...bins);
+            const maxBinCount = Math.max(...bins, 1);
             const histStartX = simW + 12;
 
             for (let b = 0; b < binsCount; b++) {
@@ -2142,78 +2171,94 @@
             }
 
             // Target Probability Readouts
-            probTarget.textContent = ((hitTargetCount / paths) * 100).toFixed(1) + '%';
-            probStretch.textContent = ((hitStretchCount / paths) * 100).toFixed(1) + '%';
-            document.getElementById('p50Val').textContent = formatPrice(p50);
-            document.getElementById('p95Val').textContent = formatPrice(p95);
+            if (probTarget) probTarget.textContent = ((hitTargetCount / paths) * 100).toFixed(1) + '%';
+            if (probStretch) probStretch.textContent = ((hitStretchCount / paths) * 100).toFixed(1) + '%';
+            const p50El = document.getElementById('p50Val');
+            if (p50El) p50El.textContent = formatPrice(p50);
+            const p95El = document.getElementById('p95Val');
+            if (p95El) p95El.textContent = formatPrice(p95);
         }
 
-        canvas.addEventListener('mousemove', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const simW = rect.width - 105;
-            const days = parseInt(daysRange.value);
-            const dayHover = Math.min(days, Math.max(0, Math.round((mouseX / simW) * days)));
-            const sigma = parseInt(volRange.value) / 100;
-            const mu = parseInt(driftRange.value) / 100;
-            const dt = 1 / 365;
-            const estP = currentS0 * Math.exp((mu - 0.5 * sigma * sigma) * (dayHover * dt));
+        if (canvas) {
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const simW = Math.max(100, rect.width - 105);
+                const days = parseInt(daysRange ? daysRange.value : 90) || 90;
+                const dayHover = Math.min(days, Math.max(0, Math.round((mouseX / simW) * days)));
+                const sigma = parseInt(volRange ? volRange.value : 62) / 100;
+                const mu = parseInt(driftRange ? driftRange.value : 28) / 100;
+                const dt = 1 / 365;
+                const estP = currentS0 * Math.exp((mu - 0.5 * sigma * sigma) * (dayHover * dt));
 
-            hoverInspectBox.innerHTML = `
-                <span>Day <strong>${dayHover}</strong> of ${days}</span>
-                <span>Median: <strong>${formatPrice(estP)}</strong></span>
-            `;
-        });
+                if (hoverInspectBox) {
+                    hoverInspectBox.innerHTML = `
+                        <span>Day <strong>${dayHover}</strong> of ${days}</span>
+                        <span>Median: <strong>${formatPrice(estP)}</strong></span>
+                    `;
+                }
+            });
+        }
 
         // -------------------------------------------------------------
         // 5. BREAK-EVEN CALCULATOR & RIBBON
         // -------------------------------------------------------------
         function updateBreakEven() {
             const data = assetData[currentAsset];
-            const basis = parseFloat(costBasisInput.value) || data.costBasis;
-            const shares = parseFloat(sharesInput.value) || data.shares;
+            if (!data) return;
+
+            const basis = parseFloat(costBasisInput ? costBasisInput.value : data.costBasis) || data.costBasis;
+            const shares = parseFloat(sharesInput ? sharesInput.value : data.shares) || data.shares;
 
             const currentDiff = currentS0 - basis;
             const currentPct = (currentDiff / basis) * 100;
             const totalDollarDiff = currentDiff * shares;
 
             const pnlHero = document.getElementById('currentPnl');
-            pnlHero.textContent = `${totalDollarDiff >= 0 ? '+' : '-'}$${Math.abs(totalDollarDiff).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${currentPct.toFixed(2)}%)`;
-            pnlHero.style.color = totalDollarDiff >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)';
+            if (pnlHero) {
+                pnlHero.textContent = `${totalDollarDiff >= 0 ? '+' : '-'}$${Math.abs(totalDollarDiff).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${currentPct.toFixed(2)}%)`;
+                pnlHero.style.color = totalDollarDiff >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)';
+            }
 
             const dist = ((basis - currentS0) / currentS0) * 100;
-            document.getElementById('distToBE').textContent = dist > 0 
-                ? `Requires +${dist.toFixed(2)}% push from current spot (${formatPrice(currentS0)}) to Parity (${formatPrice(basis)})`
-                : `Currently in profit by +${Math.abs(dist).toFixed(2)}% above entry base!`;
+            const distEl = document.getElementById('distToBE');
+            if (distEl) {
+                distEl.textContent = dist > 0 
+                    ? `Requires +${dist.toFixed(2)}% push from current spot (${formatPrice(currentS0)}) to Parity (${formatPrice(basis)})`
+                    : `Currently in profit by +${Math.abs(dist).toFixed(2)}% above entry base!`;
+            }
 
             const tbody = document.getElementById('matrixBody');
-            tbody.innerHTML = `
-                <tr>
-                    <td style="font-weight: 700; color: var(--brand-cyan);">Current Spot</td>
-                    <td>${formatPrice(currentS0)}</td>
-                    <td style="color: ${currentPct >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight:700;">${currentPct >= 0 ? '+' : ''}${currentPct.toFixed(1)}%</td>
-                    <td style="color: ${totalDollarDiff >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight:700;">${totalDollarDiff >= 0 ? '+' : '-'}$${Math.abs(totalDollarDiff).toLocaleString('en-US', {maximumFractionDigits:0})}</td>
-                </tr>
-            `;
-
-            data.stages.forEach(st => {
-                const gainPct = ((st.price - basis) / basis) * 100;
-                const netPnl = (st.price - basis) * shares;
-                const tr = document.createElement('tr');
-                if (Math.abs(st.price - basis) < 0.0001) tr.style.background = 'rgba(255, 179, 0, 0.08)';
-
-                tr.innerHTML = `
-                    <td style="font-weight: 600; color: ${Math.abs(st.price - basis) < 0.0001 ? 'var(--brand-amber)' : 'var(--text-primary)'};">${st.label}</td>
-                    <td>${formatPrice(st.price)}</td>
-                    <td style="color: ${gainPct >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight: 700;">${gainPct >= 0 ? '+' : ''}${gainPct.toFixed(1)}%</td>
-                    <td style="color: ${netPnl >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight: 700;">${netPnl >= 0 ? '+' : '-'}$${Math.abs(netPnl).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td style="font-weight: 700; color: var(--brand-cyan);">Current Spot</td>
+                        <td>${formatPrice(currentS0)}</td>
+                        <td style="color: ${currentPct >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight:700;">${currentPct >= 0 ? '+' : ''}${currentPct.toFixed(1)}%</td>
+                        <td style="color: ${totalDollarDiff >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight:700;">${totalDollarDiff >= 0 ? '+' : '-'}$${Math.abs(totalDollarDiff).toLocaleString('en-US', {maximumFractionDigits:0})}</td>
+                    </tr>
                 `;
-                tbody.appendChild(tr);
-            });
+
+                data.stages.forEach(st => {
+                    const gainPct = ((st.price - basis) / basis) * 100;
+                    const netPnl = (st.price - basis) * shares;
+                    const tr = document.createElement('tr');
+                    if (Math.abs(st.price - basis) < 0.0001) tr.style.background = 'rgba(255, 179, 0, 0.08)';
+
+                    tr.innerHTML = `
+                        <td style="font-weight: 600; color: ${Math.abs(st.price - basis) < 0.0001 ? 'var(--brand-amber)' : 'var(--text-primary)'};">${st.label}</td>
+                        <td>${formatPrice(st.price)}</td>
+                        <td style="color: ${gainPct >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight: 700;">${gainPct >= 0 ? '+' : ''}${gainPct.toFixed(1)}%</td>
+                        <td style="color: ${netPnl >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight: 700;">${netPnl >= 0 ? '+' : '-'}$${Math.abs(netPnl).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
         }
 
         function renderRibbon() {
             const track = document.getElementById('ribbonTrack');
+            if (!track) return;
             track.innerHTML = '';
 
             Object.keys(assetData).forEach(k => {
@@ -2236,36 +2281,25 @@
         }
 
         // -------------------------------------------------------------
-        // 6. UI CONTROLLERS & COMPARISON
+        // 6. UI CONTROLLERS & TABS BINDINGS
         // -------------------------------------------------------------
-        const canvas = document.getElementById('simCanvas');
-        const ctx = canvas.getContext('2d');
-        const volRange = document.getElementById('volRange');
-        const driftRange = document.getElementById('driftRange');
-        const daysRange = document.getElementById('daysRange');
-        const volReadout = document.getElementById('volReadout');
-        const driftReadout = document.getElementById('driftReadout');
-        const daysReadout = document.getElementById('daysReadout');
-        const costBasisInput = document.getElementById('costBasis');
-        const sharesInput = document.getElementById('sharesCount');
-        const probTarget = document.getElementById('probTarget');
-        const probStretch = document.getElementById('probStretch');
-        const hoverInspectBox = document.getElementById('hoverInspectBox');
-
         document.querySelectorAll('.nav-pill').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
                 const targetBtn = e.target.closest('.nav-pill');
+                if (!targetBtn) return;
                 targetBtn.classList.add('active');
 
                 const target = targetBtn.getAttribute('data-target');
                 document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
 
                 if (target === 'COMPARISON') {
-                    document.getElementById('comparison-view').classList.add('active');
+                    const compView = document.getElementById('comparison-view');
+                    if (compView) compView.classList.add('active');
                     renderComparison();
                 } else {
-                    document.getElementById('terminal-view').classList.add('active');
+                    const termView = document.getElementById('terminal-view');
+                    if (termView) termView.classList.add('active');
                     loadAsset(target);
                 }
             });
@@ -2276,8 +2310,8 @@
                 document.querySelectorAll('#timeframePresets .segment-btn').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 const days = e.target.getAttribute('data-days');
-                daysRange.value = days;
-                daysReadout.textContent = days + ' Days';
+                if (daysRange) daysRange.value = days;
+                if (daysReadout) daysReadout.textContent = days + ' Days';
                 runMonteCarlo();
             });
         });
@@ -2287,41 +2321,56 @@
                 document.querySelectorAll('#pathsPresets .segment-btn').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 simPathsCount = parseInt(e.target.getAttribute('data-paths'));
+                const b = document.getElementById('pathsBadge');
+                if (b) b.textContent = simPathsCount.toLocaleString() + ' PATHS';
                 runMonteCarlo();
             });
         });
 
         function loadAsset(key) {
+            if (!assetData[key]) return;
             currentAsset = key;
             const data = assetData[key];
             currentS0 = data.price;
 
-            document.getElementById('assetBadge').textContent = data.logo;
-            document.getElementById('assetBadge').style.background = `linear-gradient(135deg, ${data.theme}, #090d16)`;
-            document.getElementById('assetTicker').textContent = data.ticker;
-            document.getElementById('assetFullTitle').textContent = data.name;
-            document.getElementById('assetClassTag').textContent = data.classType;
+            const badge = document.getElementById('assetBadge');
+            if (badge) {
+                badge.textContent = data.logo;
+                badge.style.background = `linear-gradient(135deg, ${data.theme}, #090d16)`;
+            }
+            const ticker = document.getElementById('assetTicker');
+            if (ticker) ticker.textContent = data.ticker;
+            const title = document.getElementById('assetFullTitle');
+            if (title) title.textContent = data.name;
+            const tag = document.getElementById('assetClassTag');
+            if (tag) tag.textContent = data.classType;
 
-            document.getElementById('liveSpotPrice').textContent = formatPrice(data.price);
-            document.getElementById('liveSpotDelta').textContent = data.change + ' (30D)';
-            document.getElementById('oracleSourceLabel').textContent = `${data.source} • AUTO-SYNC`;
+            const priceEl = document.getElementById('liveSpotPrice');
+            if (priceEl) priceEl.textContent = formatPrice(data.price);
+            const deltaEl = document.getElementById('liveSpotDelta');
+            if (deltaEl) deltaEl.textContent = data.change + ' (30D)';
+            const oracle = document.getElementById('oracleSourceLabel');
+            if (oracle) oracle.textContent = `${data.source} • AUTO-SYNC`;
 
-            volRange.value = data.defaultVol;
-            driftRange.value = data.defaultDrift;
-            daysRange.value = data.defaultDays;
-            volReadout.textContent = data.defaultVol + '%';
-            driftReadout.textContent = (data.defaultDrift >= 0 ? '+' : '') + data.defaultDrift + '%';
-            daysReadout.textContent = data.defaultDays + ' Days';
+            if (volRange) volRange.value = data.defaultVol;
+            if (driftRange) driftRange.value = data.defaultDrift;
+            if (daysRange) daysRange.value = data.defaultDays;
+            if (volReadout) volReadout.textContent = data.defaultVol + '%';
+            if (driftReadout) driftReadout.textContent = (data.defaultDrift >= 0 ? '+' : '') + data.defaultDrift + '%';
+            if (daysReadout) daysReadout.textContent = data.defaultDays + ' Days';
 
             document.querySelectorAll('#timeframePresets .segment-btn').forEach(b => {
                 b.classList.toggle('active', b.getAttribute('data-days') == data.defaultDays);
             });
 
-            costBasisInput.value = data.costBasis;
-            sharesInput.value = data.shares;
-            document.getElementById('beTitle').textContent = `Analytics (${formatPrice(data.costBasis)} Basis)`;
-            document.getElementById('probTargetLabel').textContent = `P(Reach ≥ ${formatPrice(data.targetLine)})`;
-            document.getElementById('probStretchLabel').textContent = `P(Reach ≥ ${formatPrice(data.stretchLine)})`;
+            if (costBasisInput) costBasisInput.value = data.costBasis;
+            if (sharesInput) sharesInput.value = data.shares;
+            const beTitle = document.getElementById('beTitle');
+            if (beTitle) beTitle.textContent = `Analytics (${formatPrice(data.costBasis)} Basis)`;
+            const tgtLabel = document.getElementById('probTargetLabel');
+            if (tgtLabel) tgtLabel.textContent = `P(Reach ≥ ${formatPrice(data.targetLine)})`;
+            const strLabel = document.getElementById('probStretchLabel');
+            if (strLabel) strLabel.textContent = `P(Reach ≥ ${formatPrice(data.stretchLine)})`;
 
             renderTiers(data);
             updateBreakEven();
@@ -2336,6 +2385,7 @@
 
         function renderTiers(data) {
             const container = document.getElementById('executionTiersContainer');
+            if (!container) return;
             container.innerHTML = '';
 
             data.tiers.forEach((tier, i) => {
@@ -2363,9 +2413,12 @@
                     const winRate = 0.58;
                     const halfKelly = Math.max(0, ((winRate - (1 - winRate) / rrVal) * 0.5) * 100).toFixed(1);
 
-                    document.getElementById('kellyRecommendation').innerHTML = 
-                        `Selected: <strong>${formatPrice(tier.entry)}</strong> | Stop Loss: <strong>${formatPrice(tier.sl)}</strong> | Target: <strong>${formatPrice(tier.tp)}</strong> (R:R <strong>1:${rrVal}</strong>)<br>
-                         Half-Kelly Capital Allocation: <strong style="color: var(--brand-cyan)">${halfKelly}% of Portfolio</strong> (Max Risk Limit 2.0% equity)`;
+                    const kellyEl = document.getElementById('kellyRecommendation');
+                    if (kellyEl) {
+                        kellyEl.innerHTML = 
+                            `Selected: <strong>${formatPrice(tier.entry)}</strong> | Stop Loss: <strong>${formatPrice(tier.sl)}</strong> | Target: <strong>${formatPrice(tier.tp)}</strong> (R:R <strong>1:${rrVal}</strong>)<br>
+                             Half-Kelly Capital Allocation: <strong style="color: var(--brand-cyan)">${halfKelly}% of Portfolio</strong> (Max Risk Limit 2.0% equity)`;
+                    }
                 };
                 container.appendChild(el);
             });
@@ -2378,6 +2431,8 @@
             const tbody = document.getElementById('comparisonTableBody');
             const cardsContainer = document.getElementById('comparisonCardsContainer');
             const visualBars = document.getElementById('visualBarsList');
+
+            if (!tbody || !cardsContainer || !visualBars) return;
 
             tbody.innerHTML = '';
             cardsContainer.innerHTML = '';
@@ -2436,32 +2491,34 @@
             });
         }
 
-        // Deploy Modal Toggle
         function toggleDeployModal(show) {
-            document.getElementById('deployModal').classList.toggle('active', show);
+            const m = document.getElementById('deployModal');
+            if (m) m.classList.toggle('active', show);
         }
         function closeDeployModal(e) {
             if (e.target.id === 'deployModal') toggleDeployModal(false);
         }
 
-        // Event Listeners
-        volRange.addEventListener('input', (e) => { volReadout.textContent = e.target.value + '%'; if (activeChartEngine === 'MC') runMonteCarlo(); });
-        driftRange.addEventListener('input', (e) => { driftReadout.textContent = (e.target.value >= 0 ? '+' : '') + e.target.value + '%'; if (activeChartEngine === 'MC') runMonteCarlo(); });
-        daysRange.addEventListener('input', (e) => { 
-            daysReadout.textContent = e.target.value + ' Days';
+        if (volRange) volRange.addEventListener('input', (e) => { if (volReadout) volReadout.textContent = e.target.value + '%'; if (activeChartEngine === 'MC') runMonteCarlo(); });
+        if (driftRange) driftRange.addEventListener('input', (e) => { if (driftReadout) driftReadout.textContent = (e.target.value >= 0 ? '+' : '') + e.target.value + '%'; if (activeChartEngine === 'MC') runMonteCarlo(); });
+        if (daysRange) daysRange.addEventListener('input', (e) => { 
+            if (daysReadout) daysReadout.textContent = e.target.value + ' Days';
             document.querySelectorAll('#timeframePresets .segment-btn').forEach(b => {
                 b.classList.toggle('active', b.getAttribute('data-days') == e.target.value);
             });
             if (activeChartEngine === 'MC') runMonteCarlo(); 
         });
 
-        document.getElementById('btnRerun').addEventListener('click', () => {
-            if (activeChartEngine === 'MC') runMonteCarlo();
-            else TradingViewChartEngine.loadAssetCandles(currentAsset);
-        });
+        const rerunBtn = document.getElementById('btnRerun');
+        if (rerunBtn) {
+            rerunBtn.addEventListener('click', () => {
+                if (activeChartEngine === 'MC') runMonteCarlo();
+                else TradingViewChartEngine.loadAssetCandles(currentAsset);
+            });
+        }
 
-        costBasisInput.addEventListener('input', updateBreakEven);
-        sharesInput.addEventListener('input', updateBreakEven);
+        if (costBasisInput) costBasisInput.addEventListener('input', updateBreakEven);
+        if (sharesInput) sharesInput.addEventListener('input', updateBreakEven);
 
         function shareTerminal() {
             if (navigator.share) {
@@ -2476,13 +2533,31 @@
             }
         }
 
-        window.onload = () => {
-            renderRibbon();
-            loadAsset('BULL');
-            LiveWebSockets.init();
-            MarketOracle.fetchRealTimeData();
-            MarketOracle.initMicroTicks();
-        };
+        // -------------------------------------------------------------
+        // INITIALIZATION LIFECYCLE (DOMContentLoaded + Window Load)
+        // -------------------------------------------------------------
+        function initApp() {
+            try {
+                renderRibbon();
+                loadAsset('BULL');
+                LiveWebSockets.init();
+                MarketOracle.fetchRealTimeData();
+                MarketOracle.initMicroTicks();
+            } catch(e) {
+                console.error('Initialization error:', e);
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+
+        window.addEventListener('load', () => {
+            resizeCanvas();
+            if (activeChartEngine === 'MC') runMonteCarlo();
+        });
     </script>
 </body>
 </html>
