@@ -1,0 +1,8 @@
+# Netlify Configuration for Webull & Monad Terminal
+[build]
+  # Base directory is root (leave blank or ".")
+  base = ""
+  # Publish directory is the root where index.html is located
+  publish = "."
+  # No build command needed (pure client-side static app)
+  command = ""
