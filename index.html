@@ -2,996 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0" />
     <title>Webull Intelligence Terminal | Quantitative Portfolio & Live Multi-Asset Engine</title>
+    <meta name="description" content="Institutional Quantitative Portfolio Terminal & Live WebSocket Engine for Webull (BULL), Robinhood (HOOD), Coinbase (COIN), Monad (MON), Solana (SOL), and Kaspa (KAS)." />
+
+    <!-- PWA & Mobile Web App Meta -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#04060a" />
+    <meta name="mobile-web-app-capable" content="yes" />
     
-    <!-- Premium Fonts -->
+    <!-- iOS Safari PWA Configuration -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Webull Pro" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+
+    <!-- Premium Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- TradingView Lightweight Charts Standalone CDN -->
+    <!-- TradingView Lightweight Charts CDN -->
     <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
     
-    <style>
-        :root {
-            --bg-canvas: #04060a;
-            --bg-surface: #090d16;
-            --bg-surface-elevated: #0f1524;
-            --bg-surface-hover: #141c30;
-            --border-hairline: rgba(255, 255, 255, 0.07);
-            --border-active: rgba(0, 119, 255, 0.45);
-            --border-glow: rgba(0, 229, 255, 0.2);
-
-            --brand-webull: #0066ff;
-            --brand-cyan: #00e5ff;
-            --brand-emerald: #00e676;
-            --brand-crimson: #ff3366;
-            --brand-amber: #ffb300;
-            --brand-purple: #9d4edd;
-
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --text-tertiary: #475569;
-
-            --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-mono: 'Azeret Mono', monospace;
-
-            --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 16px;
-            --radius-pill: 9999px;
-            
-            --shadow-subtle: 0 4px 24px rgba(0, 0, 0, 0.45);
-            --shadow-glow: 0 0 30px rgba(0, 102, 255, 0.18);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--bg-canvas);
-            color: var(--text-primary);
-            font-family: var(--font-sans);
-            font-size: 14px;
-            line-height: 1.5;
-            padding-bottom: 76px;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 12% 8%, rgba(0, 102, 255, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 88% 50%, rgba(157, 78, 221, 0.05) 0%, transparent 45%),
-                radial-gradient(circle at 50% 90%, rgba(0, 230, 118, 0.03) 0%, transparent 50%);
-            background-attachment: fixed;
-        }
-
-        /* ----------------------------------------------------
-           1. TICKER TAPE RIBBON
-        ---------------------------------------------------- */
-        .market-ribbon {
-            background: rgba(4, 6, 10, 0.95);
-            border-bottom: 1px solid var(--border-hairline);
-            height: 38px;
-            display: flex;
-            align-items: center;
-            overflow-x: auto;
-            scrollbar-width: none;
-            padding: 0 16px;
-            font-family: var(--font-mono);
-            font-size: 11px;
-            z-index: 102;
-            position: sticky;
-            top: 0;
-            backdrop-filter: blur(16px);
-        }
-        .market-ribbon::-webkit-scrollbar { display: none; }
-
-        .ribbon-track {
-            display: flex;
-            align-items: center;
-            gap: 22px;
-            width: 100%;
-        }
-
-        .ribbon-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 4px 10px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: background 0.2s ease;
-            white-space: nowrap;
-        }
-        .ribbon-item:hover {
-            background: var(--bg-surface-hover);
-        }
-        .ribbon-symbol {
-            font-weight: 800;
-            color: #fff;
-        }
-        .ribbon-price {
-            color: var(--text-primary);
-            font-variant-numeric: tabular-nums;
-        }
-        .ribbon-tag-source {
-            font-size: 9px;
-            padding: 1px 5px;
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 3px;
-            color: var(--text-secondary);
-        }
-
-        /* ----------------------------------------------------
-           2. HEADER & TELEMETRY
-        ---------------------------------------------------- */
-        header {
-            background: rgba(9, 13, 22, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-hairline);
-            padding: 16px 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            position: relative;
-            z-index: 101;
-        }
-
-        .header-main {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .brand-cluster {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .brand-mark {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, #0052ff, #00d2ff);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-display);
-            font-weight: 900;
-            font-size: 22px;
-            color: #fff;
-            box-shadow: 0 6px 22px rgba(0, 82, 255, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .brand-meta h1 {
-            font-family: var(--font-display);
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .brand-meta span {
-            font-size: 12px;
-            color: var(--text-secondary);
-            font-family: var(--font-mono);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .spot-quote-box {
-            text-align: right;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-        }
-
-        .spot-price-text {
-            font-family: var(--font-mono);
-            font-size: 28px;
-            font-weight: 800;
-            color: #fff;
-            font-variant-numeric: tabular-nums;
-            transition: color 0.25s ease, transform 0.2s ease;
-            letter-spacing: -0.02em;
-        }
-        .spot-delta-text {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--brand-emerald);
-        }
-
-        .flash-up {
-            color: var(--brand-emerald) !important;
-            transform: scale(1.05);
-            text-shadow: 0 0 12px rgba(0, 230, 118, 0.4);
-        }
-        .flash-down {
-            color: var(--brand-crimson) !important;
-            transform: scale(0.95);
-            text-shadow: 0 0 12px rgba(255, 51, 102, 0.4);
-        }
-
-        /* Oracle Strip with Telemetry */
-        .oracle-strip {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(15, 21, 36, 0.7);
-            border: 1px solid var(--border-hairline);
-            border-radius: var(--radius-md);
-            padding: 8px 16px;
-            font-size: 11px;
-            font-family: var(--font-mono);
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .oracle-telemetry {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--text-secondary);
-            flex-wrap: wrap;
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--brand-emerald);
-            box-shadow: 0 0 12px var(--brand-emerald);
-            animation: pulseAura 2s infinite ease-in-out;
-        }
-        @keyframes pulseAura {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(0.8); }
-        }
-
-        .ws-stat-chip {
-            background: rgba(0, 230, 118, 0.12);
-            color: var(--brand-emerald);
-            border: 1px solid rgba(0, 230, 118, 0.25);
-            border-radius: 4px;
-            padding: 2px 7px;
-            font-size: 10px;
-            font-weight: 700;
-        }
-
-        .btn-oracle-sync {
-            background: rgba(0, 102, 255, 0.14);
-            border: 1px solid rgba(0, 102, 255, 0.35);
-            color: var(--brand-cyan);
-            font-family: var(--font-mono);
-            font-size: 11px;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-        }
-        .btn-oracle-sync:hover {
-            background: rgba(0, 102, 255, 0.25);
-            border-color: var(--brand-cyan);
-            box-shadow: 0 0 14px rgba(0, 229, 255, 0.2);
-        }
-
-        /* Navigation Pills */
-        .navigation-pills {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            scrollbar-width: none;
-            padding-bottom: 2px;
-        }
-        .navigation-pills::-webkit-scrollbar { display: none; }
-
-        .nav-pill {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-hairline);
-            color: var(--text-secondary);
-            padding: 9px 20px;
-            border-radius: var(--radius-pill);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .nav-pill:hover {
-            background: rgba(255, 255, 255, 0.07);
-            color: var(--text-primary);
-        }
-        .nav-pill.active {
-            background: rgba(0, 102, 255, 0.2);
-            border-color: var(--brand-webull);
-            color: #fff;
-            box-shadow: 0 0 20px rgba(0, 102, 255, 0.3);
-        }
-
-        .pill-badge {
-            font-size: 10px;
-            font-family: var(--font-mono);
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        /* ----------------------------------------------------
-           3. MAIN LAYOUT GRID
-        ---------------------------------------------------- */
-        .terminal-container {
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: 24px 20px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 24px;
-        }
-
-        @media (min-width: 1100px) {
-            .terminal-container {
-                grid-template-columns: 1.45fr 0.85fr;
-            }
-            .grid-span-full {
-                grid-column: 1 / -1;
-            }
-        }
-
-        /* ----------------------------------------------------
-           4. SURFACE CARDS (Obsidian Luxury)
-        ---------------------------------------------------- */
-        .glass-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-hairline);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            position: relative;
-            box-shadow: var(--shadow-subtle);
-            backdrop-filter: blur(16px);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .glass-card:hover {
-            border-color: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
-        }
-
-        .card-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .card-heading {
-            font-family: var(--font-display);
-            font-size: 14px;
-            font-weight: 800;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card-heading::before {
-            content: '';
-            width: 4px;
-            height: 14px;
-            background: var(--brand-webull);
-            border-radius: 2px;
-            box-shadow: 0 0 8px var(--brand-webull);
-        }
-
-        .tag {
-            font-size: 10px;
-            font-family: var(--font-mono);
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: var(--radius-sm);
-            letter-spacing: 0.02em;
-        }
-        .tag-blue { background: rgba(0, 102, 255, 0.14); color: var(--brand-cyan); border: 1px solid rgba(0, 102, 255, 0.35); }
-        .tag-green { background: rgba(0, 230, 118, 0.14); color: var(--brand-emerald); border: 1px solid rgba(0, 230, 118, 0.35); }
-        .tag-amber { background: rgba(255, 179, 0, 0.14); color: var(--brand-amber); border: 1px solid rgba(255, 179, 0, 0.35); }
-        .tag-purple { background: rgba(157, 78, 221, 0.14); color: var(--brand-purple); border: 1px solid rgba(157, 78, 221, 0.35); }
-
-        /* ----------------------------------------------------
-           5. ADVANCED AUTOMATED SIMULATION ENGINE
-        ---------------------------------------------------- */
-        .scenario-engine-bar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 14px;
-            overflow-x: auto;
-            scrollbar-width: none;
-            padding-bottom: 4px;
-        }
-        .scenario-engine-bar::-webkit-scrollbar { display: none; }
-
-        .scenario-chip {
-            background: rgba(255, 255, 255, 0.025);
-            border: 1px solid var(--border-hairline);
-            color: var(--text-secondary);
-            font-family: var(--font-mono);
-            font-size: 11px;
-            font-weight: 700;
-            padding: 6px 13px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-            transition: all 0.2s ease;
-        }
-        .scenario-chip:hover {
-            background: rgba(255, 255, 255, 0.06);
-            color: #fff;
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-        .scenario-chip.active {
-            background: rgba(0, 102, 255, 0.18);
-            border-color: var(--brand-cyan);
-            color: #fff;
-            box-shadow: 0 0 14px rgba(0, 229, 255, 0.25);
-        }
-
-        .engine-config-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-            gap: 12px;
-            flex-wrap: wrap;
-            background: rgba(15, 21, 36, 0.5);
-            border: 1px solid var(--border-hairline);
-            border-radius: var(--radius-md);
-            padding: 8px 14px;
-        }
-
-        .engine-auto-toggles {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            flex-wrap: wrap;
-        }
-
-        .toggle-switch-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            user-select: none;
-        }
-        .toggle-switch-label input { display: none; }
-        .toggle-switch-handle {
-            width: 30px;
-            height: 16px;
-            background: #1c263c;
-            border-radius: 8px;
-            position: relative;
-            transition: background 0.2s;
-        }
-        .toggle-switch-handle::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #fff;
-            transition: transform 0.2s;
-        }
-        .toggle-switch-label input:checked + .toggle-switch-handle {
-            background: var(--brand-emerald);
-        }
-        .toggle-switch-label input:checked + .toggle-switch-handle::after {
-            transform: translateX(14px);
-        }
-
-        .chart-engine-toggle-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .segmented-group {
-            display: inline-flex;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-hairline);
-            border-radius: var(--radius-md);
-            padding: 3px;
-            gap: 2px;
-        }
-
-        .segment-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            font-family: var(--font-mono);
-            font-size: 11px;
-            font-weight: 700;
-            padding: 6px 13px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: all 0.15s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .segment-btn.active {
-            background: var(--brand-webull);
-            color: #fff;
-            box-shadow: 0 2px 10px rgba(0, 102, 255, 0.4);
-        }
-
-        .chart-stage-wrapper {
-            position: relative;
-            width: 100%;
-            height: 380px;
-            background: #030508;
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            margin-bottom: 18px;
-            overflow: hidden;
-        }
-
-        #simCanvasContainer {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        canvas { width: 100%; height: 100%; display: block; }
-
-        #tvChartContainer {
-            width: 100%;
-            height: 100%;
-            display: none;
-        }
-
-        .chart-hover-inspect {
-            position: absolute;
-            top: 14px;
-            left: 16px;
-            background: rgba(9, 13, 22, 0.92);
-            border: 1px solid var(--border-hairline);
-            border-radius: var(--radius-sm);
-            padding: 8px 14px;
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-secondary);
-            pointer-events: none;
-            display: flex;
-            gap: 16px;
-            backdrop-filter: blur(10px);
-            z-index: 5;
-        }
-
-        .chart-legend-badge {
-            position: absolute;
-            bottom: 14px;
-            left: 16px;
-            background: rgba(9, 13, 22, 0.85);
-            border: 1px solid var(--border-hairline);
-            border-radius: var(--radius-sm);
-            padding: 4px 10px;
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: var(--text-tertiary);
-            pointer-events: none;
-            display: flex;
-            gap: 12px;
-            z-index: 5;
-        }
-
-        .sliders-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .slider-field {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .slider-field label {
-            font-size: 11px;
-            font-family: var(--font-mono);
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        .slider-field input[type="range"] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            background: #141b2b;
-            border-radius: 3px;
-            outline: none;
-        }
-
-        .slider-field input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--brand-cyan);
-            cursor: pointer;
-            box-shadow: 0 0 10px var(--brand-cyan);
-            border: 2px solid #000;
-        }
-
-        .slider-readout {
-            font-family: var(--font-mono);
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .btn-execute-sim {
-            background: linear-gradient(135deg, #0052ff, #00a2ff);
-            color: #fff;
-            font-family: var(--font-display);
-            font-weight: 800;
-            font-size: 14px;
-            border: none;
-            border-radius: var(--radius-md);
-            padding: 14px 24px;
-            cursor: pointer;
-            width: 100%;
-            box-shadow: 0 4px 22px rgba(0, 82, 255, 0.4);
-            transition: all 0.2s ease;
-            letter-spacing: 0.02em;
-        }
-        .btn-execute-sim:hover {
-            filter: brightness(1.1);
-            transform: translateY(-1px);
-        }
-
-        .metrics-cards-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 18px;
-        }
-        @media (min-width: 680px) {
-            .metrics-cards-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
-        .metric-cell {
-            background: rgba(255, 255, 255, 0.025);
-            border: 1px solid var(--border-hairline);
-            border-radius: var(--radius-md);
-            padding: 14px;
-            text-align: center;
-        }
-        .metric-cell-label {
-            font-size: 10px;
-            font-family: var(--font-mono);
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            margin-bottom: 4px;
-        }
-        .metric-cell-val {
-            font-family: var(--font-mono);
-            font-size: 17px;
-            font-weight: 800;
-            color: #fff;
-            font-variant-numeric: tabular-nums;
-        }
-
-        /* ----------------------------------------------------
-           6. BREAK-EVEN & POSITION ENGINE
-        ---------------------------------------------------- */
-        .inputs-split {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 16px;
-        }
-
-        .param-input-box {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-hairline);
-            border-radius: var(--radius-md);
-            padding: 12px 14px;
-        }
-        .param-input-box label {
-            font-size: 10px;
-            color: var(--text-secondary);
-            font-family: var(--font-mono);
-            text-transform: uppercase;
-            margin-bottom: 4px;
-            display: block;
-        }
-        .param-input-box input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-family: var(--font-mono);
-            font-size: 18px;
-            font-weight: 700;
-            outline: none;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .pnl-hero-banner {
-            background: linear-gradient(135deg, rgba(0, 102, 255, 0.15), rgba(0, 230, 118, 0.06));
-            border: 1px solid rgba(0, 102, 255, 0.28);
-            border-radius: var(--radius-md);
-            padding: 18px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .pnl-hero-sub {
-            font-size: 11px;
-            font-family: var(--font-mono);
-            color: var(--text-secondary);
-            text-transform: uppercase;
-        }
-        .pnl-hero-digits {
-            font-family: var(--font-mono);
-            font-size: 28px;
-            font-weight: 800;
-            margin: 4px 0;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            font-family: var(--font-mono);
-        }
-        .data-table th {
-            text-align: left;
-            padding: 10px 8px;
-            color: var(--text-tertiary);
-            font-size: 10px;
-            text-transform: uppercase;
-            border-bottom: 1px solid var(--border-hairline);
-        }
-        .data-table td {
-            padding: 11px 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            font-variant-numeric: tabular-nums;
-        }
-
-        /* Execution Tiers */
-        .tier-strategy-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-hairline);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .tier-strategy-card:hover {
-            border-color: rgba(255, 255, 255, 0.15);
-            background: rgba(255, 255, 255, 0.04);
-        }
-        .tier-strategy-card.active {
-            border-color: var(--brand-webull);
-            background: rgba(0, 102, 255, 0.08);
-            box-shadow: 0 0 20px rgba(0, 102, 255, 0.2);
-        }
-        .tier-card-title {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-        .tier-card-specs {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--text-secondary);
-            font-family: var(--font-mono);
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        /* ----------------------------------------------------
-           7. COMPARISON VIEW
-        ---------------------------------------------------- */
-        .visual-bar-item {
-            display: grid;
-            grid-template-columns: 85px 1fr 110px;
-            gap: 14px;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        .bar-label-symbol {
-            font-family: var(--font-mono);
-            font-weight: 800;
-            font-size: 13px;
-        }
-        .bar-track-shell {
-            background: #0b1120;
-            height: 12px;
-            border-radius: 6px;
-            overflow: hidden;
-            position: relative;
-        }
-        .bar-fill-element {
-            height: 100%;
-            border-radius: 6px;
-            transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .bar-stat-readout {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            font-weight: 700;
-            text-align: right;
-            color: var(--brand-emerald);
-        }
-
-        /* ----------------------------------------------------
-           8. MODAL (Deploy Guide)
-        ---------------------------------------------------- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(12px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-            padding: 20px;
-        }
-        .modal-overlay.active {
-            display: flex;
-        }
-        .modal-content {
-            background: var(--bg-surface-elevated);
-            border: 1px solid var(--border-hairline);
-            border-radius: var(--radius-lg);
-            max-width: 620px;
-            width: 100%;
-            padding: 28px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-            position: relative;
-        }
-        .modal-title {
-            font-family: var(--font-display);
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .modal-step {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-hairline);
-            border-radius: var(--radius-md);
-            padding: 14px;
-            margin-bottom: 12px;
-        }
-        .modal-step-title {
-            font-weight: 700;
-            color: var(--brand-cyan);
-            margin-bottom: 4px;
-            font-size: 13px;
-        }
-        .modal-close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        /* Bottom Floating Bar */
-        .floating-dock {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(6, 9, 16, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border-hairline);
-            padding: 12px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 99;
-        }
-
-        .btn-dock-action {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-hairline);
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: var(--radius-sm);
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-        .btn-dock-action:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .section-view {
-            display: none;
-            animation: fadeInView 0.35s ease forwards;
-        }
-        .section-view.active {
-            display: grid;
-        }
-
-        @keyframes fadeInView {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media print {
-            body { background: #fff !important; color: #000 !important; }
-            .market-ribbon, header, .floating-dock, .btn-execute-sim, .sliders-grid, .chart-engine-toggle-bar, .scenario-engine-bar, .engine-config-bar { display: none !important; }
-            .glass-card { border: 1px solid #ddd !important; background: #fff !important; color: #000 !important; }
-        }
-    </style>
+    <!-- Modular Stylesheets -->
+    <link rel="stylesheet" href="/css/theme.css" />
+    <link rel="stylesheet" href="/css/layout.css" />
+    <link rel="stylesheet" href="/css/mobile.css" />
 </head>
 <body>
+
+    <!-- PWA Smart Install Banner (Chromium / Android) -->
+    <div class="pwa-install-banner" id="pwaInstallBanner">
+        <div class="pwa-banner-left">
+            <div class="pwa-app-icon-thumb">W</div>
+            <div class="pwa-banner-text">
+                <span class="pwa-banner-title">Install Webull Pro Terminal</span>
+                <span class="pwa-banner-desc">Fast standalone app for iOS & Android</span>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn-pwa-install" onclick="triggerPWAInstall()">Install App</button>
+            <button class="btn-pwa-dismiss" onclick="dismissPWABanner()">&times;</button>
+        </div>
+    </div>
 
     <!-- 1. Top Market Ticker Ribbon -->
     <div class="market-ribbon">
         <div class="ribbon-track" id="ribbonTrack">
-            <!-- Dynamically populated -->
+            <!-- Populated dynamically by js/calculator.js -->
         </div>
     </div>
 
@@ -1019,22 +80,19 @@
         <div class="oracle-strip">
             <div class="oracle-telemetry">
                 <span class="live-dot" id="wsConnectionDot"></span>
-                <span>QUANT ENGINE: <strong id="oracleSourceLabel" style="color: #fff;">HYBRID WS & REST (Coinbase + OKX V5 + Yahoo)</strong></span>
-                <span style="color: var(--text-tertiary);">•</span>
-                <span class="ws-stat-chip" id="wsLatencyBadge">WS PING: 32ms</span>
-                <span class="ws-stat-chip" id="wsThroughputBadge" style="background: rgba(0, 102, 255, 0.12); color: var(--brand-cyan); border-color: rgba(0, 102, 255, 0.35);">14 TICKS/SEC</span>
-                <span style="color: var(--text-tertiary);">•</span>
-                <span id="oracleTimestamp" style="color: var(--text-secondary);">Live Stream Connected</span>
+                <span id="oracleSourceLabel">Coinbase & OKX WebSockets • AUTO-SYNC</span>
+                <span class="ws-stat-chip" id="wsLatencyBadge">WS PING: 42ms</span>
+                <span class="ws-stat-chip" id="wsThroughputBadge">8 TICKS/SEC</span>
+                <span style="color: var(--text-tertiary);" id="oracleTimestamp">Syncing feeds...</span>
             </div>
-            <div>
-                <button class="btn-oracle-sync" onclick="MarketOracle.fetchRealTimeData(true)">
-                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    Sync Free Oracles
-                </button>
-            </div>
+
+            <button class="btn-oracle-sync" onclick="MarketOracle.fetchRealTimeData(true)">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Sync Oracles
+            </button>
         </div>
 
-        <!-- Navigation Pills -->
+        <!-- Navigation Pills (Asset Switcher) -->
         <div class="navigation-pills">
             <button class="nav-pill active" data-target="BULL">
                 <span>BULL</span>
@@ -1062,13 +120,13 @@
             </button>
             <button class="nav-pill" data-target="COMPARISON" style="margin-left: auto; border-color: var(--brand-cyan); color: #fff;">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                Compare All 6 Assets
+                Compare All 6
             </button>
         </div>
     </header>
 
     <!-- 3. MAIN TERMINAL VIEW -->
-    <div id="terminal-view" class="terminal-container section-view active">
+    <main id="terminal-view" class="terminal-container section-view active">
         <!-- Dual Chart Engine Stage -->
         <div class="glass-card">
             <!-- Macro Scenario Presets Bar (1-Click Automation) -->
@@ -1091,27 +149,27 @@
             </div>
 
             <!-- Engine Automated Configuration Bar -->
-            <div class="engine-config-bar">
-                <div class="engine-auto-toggles">
-                    <label class="toggle-switch-label">
-                        <input type="checkbox" id="autoSimToggle" checked onchange="toggleAutoSim(this.checked)">
-                        <span class="toggle-switch-handle"></span>
+            <div class="engine-switcher-bar">
+                <div class="automation-toggles-row" style="margin-bottom: 0;">
+                    <label class="toggle-switch-group">
+                        <span class="switch-pill"></span>
+                        <input type="checkbox" id="autoSimToggle" checked onchange="window.autoSimEnabled = this.checked" style="display:none;">
                         <span>Auto-Simulate on Market Ticks</span>
                     </label>
 
-                    <label class="toggle-switch-label">
-                        <input type="checkbox" id="mertonJumpToggle" onchange="toggleMertonJumps(this.checked)">
-                        <span class="toggle-switch-handle"></span>
+                    <label class="toggle-switch-group">
+                        <span class="switch-pill"></span>
+                        <input type="checkbox" id="mertonJumpToggle" onchange="window.mertonJumpEnabled = this.checked; window.runMonteCarlo();" style="display:none;">
                         <span>Merton Jump-Diffusion (Gaps)</span>
                     </label>
                 </div>
 
-                <div class="segmented-group" id="chartEngineToggle">
-                    <button class="segment-btn active" id="btnModeMonteCarlo" onclick="switchChartEngine('MC')">
+                <div class="engine-toggle-group">
+                    <button class="engine-btn active" id="btnModeMonteCarlo" onclick="switchChartEngine('MC')">
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
                         Monte Carlo (Fan & Density)
                     </button>
-                    <button class="segment-btn" id="btnModeCandlestick" onclick="switchChartEngine('TV')">
+                    <button class="engine-btn" id="btnModeCandlestick" onclick="switchChartEngine('TV')">
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 3v18M17 3v18M3 8h8v8H3zM13 6h8v8h-8z"></path></svg>
                         TradingView Candlesticks
                     </button>
@@ -1119,8 +177,8 @@
             </div>
 
             <!-- Segmented Timeframe & Paths Bar (For MC) -->
-            <div class="segmented-presets-bar" id="mcPresetsBar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-                <div class="segmented-group" id="timeframePresets">
+            <div class="chart-controls-cluster" id="mcPresetsBar">
+                <div class="segmented-control" id="timeframePresets">
                     <button class="segment-btn" data-days="30">30D</button>
                     <button class="segment-btn" data-days="60">60D</button>
                     <button class="segment-btn active" data-days="90">90D</button>
@@ -1128,7 +186,7 @@
                     <button class="segment-btn" data-days="365">1YR</button>
                 </div>
 
-                <div class="segmented-group" id="pathsPresets">
+                <div class="segmented-control" id="pathsPresets">
                     <button class="segment-btn" data-paths="500">500P</button>
                     <button class="segment-btn active" data-paths="1000">1000P</button>
                     <button class="segment-btn" data-paths="2500">2500P</button>
@@ -1141,7 +199,7 @@
                 <div id="simCanvasContainer">
                     <canvas id="simCanvas"></canvas>
                     <div class="chart-hover-inspect" id="hoverInspectBox">
-                        <span>Hover over paths to inspect timeline & probability density</span>
+                        <span>Drag across chart on mobile or hover to inspect timeline</span>
                     </div>
                     <div class="chart-legend-badge">
                         <span>● Shaded: 10th–90th Quantile Cone</span>
@@ -1156,20 +214,26 @@
 
             <!-- Simulation Parameters Grid -->
             <div class="sliders-grid">
-                <div class="slider-field">
-                    <label>VOLATILITY (σ)</label>
+                <div class="slider-control-group">
+                    <div class="slider-label-row">
+                        <span>VOLATILITY (σ)</span>
+                        <span class="slider-readout" id="volReadout">62%</span>
+                    </div>
                     <input type="range" id="volRange" min="10" max="250" value="62" />
-                    <div class="slider-readout" id="volReadout">62%</div>
                 </div>
-                <div class="slider-field">
-                    <label>ANNUAL DRIFT (μ)</label>
+                <div class="slider-control-group">
+                    <div class="slider-label-row">
+                        <span>ANNUAL DRIFT (μ)</span>
+                        <span class="slider-readout" id="driftReadout">+28%</span>
+                    </div>
                     <input type="range" id="driftRange" min="-50" max="300" value="28" />
-                    <div class="slider-readout" id="driftReadout">+28%</div>
                 </div>
-                <div class="slider-field">
-                    <label>TIME HORIZON</label>
+                <div class="slider-control-group">
+                    <div class="slider-label-row">
+                        <span>TIME HORIZON</span>
+                        <span class="slider-readout" id="daysReadout">90 Days</span>
+                    </div>
                     <input type="range" id="daysRange" min="7" max="365" value="90" />
-                    <div class="slider-readout" id="daysReadout">90 Days</div>
                 </div>
             </div>
 
@@ -1179,11 +243,11 @@
             <div class="metrics-cards-grid">
                 <div class="metric-cell">
                     <div class="metric-cell-label" id="probTargetLabel">P(Reach ≥ $11.00)</div>
-                    <div class="metric-cell-val" id="probTarget" style="color: var(--brand-cyan);">72.4%</div>
+                    <div class="metric-cell-val" id="probTargetVal" style="color: var(--brand-cyan);">72.4%</div>
                 </div>
                 <div class="metric-cell">
                     <div class="metric-cell-label" id="probStretchLabel">P(Reach ≥ $12.80)</div>
-                    <div class="metric-cell-val" id="probStretch" style="color: var(--brand-emerald);">44.8%</div>
+                    <div class="metric-cell-val" id="probStretchVal" style="color: var(--brand-emerald);">44.8%</div>
                 </div>
                 <div class="metric-cell">
                     <div class="metric-cell-label">50TH PCT (MEDIAN)</div>
@@ -1196,19 +260,19 @@
             </div>
         </div>
 
-        <!-- Break-Even Analytics -->
-        <div class="glass-card">
+        <!-- Break-Even & Position Analytics Card -->
+        <div class="glass-card" id="breakEvenSectionCard">
             <div class="card-header-row">
-                <div class="card-heading"><span id="beTitle">Break-Even & Sizing Analytics</span></div>
+                <div class="card-title"><span id="beTitle">Break-Even & Sizing Analytics</span></div>
                 <span class="tag tag-amber">INSTITUTIONAL PIVOT</span>
             </div>
 
             <div class="inputs-split">
-                <div class="param-input-box">
+                <div class="input-wrap-box">
                     <label>TRADER COST BASIS ($)</label>
                     <input type="number" id="costBasis" value="11.00" step="0.001" />
                 </div>
-                <div class="param-input-box">
+                <div class="input-wrap-box">
                     <label>POSITION SIZE (UNITS)</label>
                     <input type="number" id="sharesCount" value="5000" step="10" />
                 </div>
@@ -1222,28 +286,30 @@
                 </div>
             </div>
 
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>STAGE</th>
-                        <th>PRICE</th>
-                        <th>GAIN</th>
-                        <th>EST. NET P&L</th>
-                    </tr>
-                </thead>
-                <tbody id="matrixBody"></tbody>
-            </table>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>STAGE</th>
+                            <th>PRICE</th>
+                            <th>GAIN</th>
+                            <th>EST. NET P&L</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matrixBody"></tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- Strategy Execution Matrix -->
+        <!-- Strategy Execution Matrix & Kelly Criterion -->
         <div class="glass-card grid-span-full">
             <div class="card-header-row">
-                <div class="card-heading">Algorithmic Execution Tiers & Kelly Allocation</div>
+                <div class="card-title">Algorithmic Execution Tiers & Kelly Allocation</div>
                 <span class="tag tag-green">CAPITAL PRESERVATION</span>
             </div>
 
             <div id="executionTiersContainer">
-                <!-- Dynamically populated -->
+                <!-- Dynamically populated by js/calculator.js -->
             </div>
 
             <div style="margin-top: 16px; padding: 16px; background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-md); border: 1px solid var(--border-hairline);">
@@ -1251,17 +317,17 @@
                     KELLY CRITERION POSITION SIZING PROJECTION
                 </div>
                 <div style="font-size: 13px; color: var(--text-secondary);" id="kellyRecommendation">
-                    Select a tier to inspect optimal risk sizing.
+                    Select an execution tier above to inspect optimal capital allocation.
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <!-- 4. COMPARISON DASHBOARD -->
     <div id="comparison-view" class="terminal-container section-view">
         <div class="glass-card grid-span-full">
             <div class="card-header-row">
-                <div class="card-heading">Comprehensive Multi-Asset Comparison</div>
+                <div class="card-title">Comprehensive Multi-Asset Comparison</div>
                 <span class="tag tag-purple">CROSS-ASSET PROJECTIONS</span>
             </div>
 
@@ -1276,7 +342,7 @@
                 <div id="visualBarsList"></div>
             </div>
 
-            <div style="overflow-x: auto;">
+            <div class="data-table-container">
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -1295,7 +361,7 @@
                 </table>
             </div>
 
-            <div id="comparisonCardsContainer" style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
+            <div id="comparisonCardsContainer" style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
                 <!-- Cards injected here -->
             </div>
         </div>
@@ -1306,32 +372,82 @@
         <div class="modal-content" onclick="event.stopPropagation()">
             <button class="modal-close-btn" onclick="toggleDeployModal(false)">&times;</button>
             <div class="modal-title">
-                <span>🚀 Deploy to the Web in 60 Seconds</span>
+                <span>🚀 Webull Pro Terminal Deployment</span>
             </div>
             <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 18px;">
-                This terminal is 100% self-contained in a single file with zero dependencies. You can host and share it publicly on HTTPS with zero server setup:
+                This terminal is hosted on Netlify Edge with continuous delivery from GitHub:
             </p>
 
             <div class="modal-step">
-                <div class="modal-step-title">Option A: Netlify Drop (Instant, Free, No Sign-up Needed)</div>
+                <div class="modal-step-title">Live Netlify Production URL</div>
                 <p style="color: var(--text-secondary); font-size: 12px; margin-bottom: 8px;">
-                    1. Open <a href="https://app.netlify.com/drop" target="_blank" style="color: var(--brand-cyan); font-weight: 700;">app.netlify.com/drop</a> in your browser.<br>
-                    2. Drag and drop your project folder containing <code>index.html</code>.<br>
-                    3. Netlify will immediately give you a live production URL like <code>https://webull-monad-terminal.netlify.app</code>!
+                    Your live progressive web terminal is deployed at:<br>
+                    <a href="https://vantixtracker.netlify.app" target="_blank" style="color: var(--brand-cyan); font-weight: 700; word-break: break-all;">https://vantixtracker.netlify.app</a>
                 </p>
             </div>
 
             <div class="modal-step">
-                <div class="modal-step-title">Option B: GitHub Pages (Automated CI/CD Included)</div>
+                <div class="modal-step-title">Install as Mobile App (PWA)</div>
                 <p style="color: var(--text-secondary); font-size: 12px;">
-                    Your repository already has <code>.github/workflows/deploy.yml</code> installed.<br>
-                    Simply push to GitHub and enable <strong>Settings → Pages → GitHub Actions</strong> for continuous free hosting.
+                    • <strong>Android / Chrome</strong>: Tap the "Install App" prompt or choose "Install to Home Screen".<br>
+                    • <strong>iOS Safari</strong>: Tap the Share button ⎋, then choose "Add to Home Screen ➕".
                 </p>
             </div>
         </div>
     </div>
 
-    <!-- 6. Floating Bottom Status Dock -->
+    <!-- 6. iOS Safari Add to Home Screen Modal -->
+    <div class="modal-overlay" id="iosInstallModal" onclick="closeDeployModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="toggleIOSGuide(false)">&times;</button>
+            <div class="modal-title">
+                <div class="brand-mark" style="width: 32px; height: 32px; font-size: 16px;">W</div>
+                <span>Install on iPhone / iPad</span>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 18px;">
+                Install Webull Pro Terminal on your home screen for full-screen view and instant offline loading:
+            </p>
+            <div class="ios-guide-step">
+                <div class="ios-step-num">1</div>
+                <div>Tap the <strong>Share</strong> button <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align: middle; display: inline;"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8m-4-6l-4-4m0 0L8 6m4-4v12"></path></svg> in the bottom Safari bar.</div>
+            </div>
+            <div class="ios-guide-step">
+                <div class="ios-step-num">2</div>
+                <div>Scroll down in the share sheet and tap <strong>Add to Home Screen ➕</strong>.</div>
+            </div>
+            <div class="ios-guide-step">
+                <div class="ios-step-num">3</div>
+                <div>Tap <strong>Add</strong> in the top right corner. The Webull Pro icon will appear on your home screen!</div>
+            </div>
+            <button class="btn-execute-sim" style="margin-top: 14px;" onclick="toggleIOSGuide(false)">Got It</button>
+        </div>
+    </div>
+
+    <!-- 7. Mobile Bottom Navigation Dock (iOS & Android) -->
+    <nav class="mobile-nav-dock">
+        <button class="mobile-dock-tab active" data-tab="assets" onclick="handleMobileDockTab('assets')">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            <span>Assets</span>
+        </button>
+        <button class="mobile-dock-tab" data-tab="chart" onclick="handleMobileDockTab('chart')">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 3v18h18M7 16l5-5 4 4 6-7"></path></svg>
+            <span>Chart</span>
+        </button>
+        <button class="mobile-dock-tab" data-tab="risk" onclick="handleMobileDockTab('risk')">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+            <span>P&L Risk</span>
+        </button>
+        <button class="mobile-dock-tab" data-tab="compare" onclick="handleMobileDockTab('compare')">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+            <span>Matrix</span>
+        </button>
+        <button class="mobile-dock-tab" data-tab="install" onclick="handleMobileDockTab('install')">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+            <span>App</span>
+        </button>
+    </nav>
+
+    <!-- 8. Desktop Floating Status Bar -->
     <div class="floating-dock">
         <div style="display: flex; align-items: center; gap: 10px;">
             <span class="live-dot"></span>
@@ -1341,1223 +457,28 @@
         </div>
 
         <div style="display: flex; gap: 8px;">
-            <button class="btn-dock-action" style="background: rgba(0, 102, 255, 0.2); border-color: var(--brand-cyan); color: #fff;" onclick="toggleDeployModal(true)">
+            <button class="btn-dock-action btn-install-pwa-trigger" style="background: rgba(0, 102, 255, 0.2); border-color: var(--brand-cyan); color: #fff;" onclick="triggerPWAInstall()">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                Deploy to Web (Free)
-            </button>
-            <button class="btn-dock-action" onclick="window.print()">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                Export Brief
+                Install App
             </button>
             <button class="btn-dock-action" onclick="shareTerminal()">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-                Share Link
+                Share
+            </button>
+            <button class="btn-dock-action" onclick="toggleDeployModal(true)">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Info
             </button>
         </div>
     </div>
 
-    <!-- 7. Application Script & Core Engine -->
-    <script>
-        // -------------------------------------------------------------
-        // ACCURATE ASSET MODELS & LIVE BENCHMARKS
-        // -------------------------------------------------------------
-        const assetData = {
-            BULL: {
-                ticker: 'BULL', name: 'Webull Corporation', type: 'NASDAQ', classType: 'EQUITY',
-                price: 9.62, change: '+31.8%',
-                logo: 'W', theme: 'var(--brand-webull)',
-                defaultVol: 62, defaultDrift: 28, defaultDays: 90,
-                costBasis: 11.00, shares: 5000,
-                targetLine: 11.00, stretchLine: 12.80,
-                source: 'Yahoo Finance Proxy',
-                stages: [
-                    { label: 'Psychological Test', price: 10.00 },
-                    { label: 'Break-Even Parity', price: 11.00 },
-                    { label: 'Structural Pivot', price: 12.80 },
-                    { label: 'Year-End Target', price: 14.50 },
-                    { label: '2027 Expansion', price: 17.50 }
-                ],
-                tiers: [
-                    { name: 'BREAKOUT MOMENTUM', entry: 9.45, sl: 8.50, tp: 12.80, color: 'var(--brand-cyan)' },
-                    { name: 'OPTIMAL RETEST (REC)', entry: 8.50, sl: 6.50, tp: 13.80, color: 'var(--brand-emerald)' },
-                    { name: 'DEEP VALUE ACCUMULATION', entry: 7.15, sl: 5.50, tp: 14.50, color: 'var(--brand-amber)' }
-                ],
-                summary: "Webull's institutional break-even pivot at $11.00 remains the key threshold. Strong options clearing volumes and international licensing (UK, APAC) drive operating leverage."
-            },
-            HOOD: {
-                ticker: 'HOOD', name: 'Robinhood Markets', type: 'NASDAQ', classType: 'EQUITY',
-                price: 23.45, change: '+14.2%',
-                logo: 'H', theme: '#00c805',
-                defaultVol: 58, defaultDrift: 22, defaultDays: 90,
-                costBasis: 20.00, shares: 1000,
-                targetLine: 28.00, stretchLine: 34.00,
-                source: 'Robinhood / Yahoo Proxy',
-                stages: [
-                    { label: 'Local Support', price: 21.00 },
-                    { label: 'Recent Resistance', price: 25.50 },
-                    { label: 'Breakout Pivot', price: 28.00 },
-                    { label: 'Macro Extension', price: 34.00 }
-                ],
-                tiers: [
-                    { name: 'TREND CONTINUATION', entry: 23.00, sl: 19.50, tp: 28.00, color: 'var(--brand-cyan)' },
-                    { name: 'MEAN REVERSION PULLBACK', entry: 21.50, sl: 18.00, tp: 30.00, color: 'var(--brand-emerald)' },
-                    { name: 'MACRO DIP', entry: 18.50, sl: 15.00, tp: 34.00, color: 'var(--brand-amber)' }
-                ],
-                summary: "Pro-trader terminal (Robinhood Legend) scaling across active account cohorts. High cash yield balances and cryptocurrency revenue correlation."
-            },
-            COIN: {
-                ticker: 'COIN', name: 'Coinbase Global', type: 'NASDAQ', classType: 'EQUITY',
-                price: 265.10, change: '+22.5%',
-                logo: 'C', theme: '#0052ff',
-                defaultVol: 75, defaultDrift: 45, defaultDays: 90,
-                costBasis: 210.00, shares: 100,
-                targetLine: 300.00, stretchLine: 350.00,
-                source: 'Coinbase / Yahoo Proxy',
-                stages: [
-                    { label: 'Base Support', price: 230.00 },
-                    { label: 'Psychological $300', price: 300.00 },
-                    { label: 'Cycle Highs', price: 350.00 },
-                    { label: 'Blue Sky Extension', price: 420.00 }
-                ],
-                tiers: [
-                    { name: 'MOMENTUM EXPANSION', entry: 260.00, sl: 230.00, tp: 320.00, color: 'var(--brand-cyan)' },
-                    { name: 'SUPPORT RE-ENTRY', entry: 235.00, sl: 200.00, tp: 350.00, color: 'var(--brand-emerald)' },
-                    { name: 'LIQUIDITY SWEEP', entry: 210.00, sl: 180.00, tp: 420.00, color: 'var(--brand-amber)' }
-                ],
-                summary: "Premier institutional crypto infrastructure asset. Layer-2 Base transaction fees combined with institutional custody provide high operating margin expansion."
-            },
-            MONAD: {
-                ticker: 'MONAD', name: 'Monad Network (MON)', type: 'CRYPTO', classType: 'L1 CRYPTO',
-                price: 0.0255, change: '+18.4%',
-                logo: 'M', theme: 'var(--brand-purple)',
-                defaultVol: 95, defaultDrift: 85, defaultDays: 90,
-                costBasis: 0.022, shares: 250000,
-                targetLine: 0.035, stretchLine: 0.050,
-                source: 'OKX WebSocket (Live)',
-                stages: [
-                    { label: 'Range Low Support', price: 0.0210 },
-                    { label: 'Parity Base', price: 0.0255 },
-                    { label: 'Breakout Resistance', price: 0.0320 },
-                    { label: 'Discovery Pivot', price: 0.0450 },
-                    { label: 'Cycle Target', price: 0.0750 }
-                ],
-                tiers: [
-                    { name: 'MOMENTUM EXPANSION', entry: 0.0250, sl: 0.0210, tp: 0.0450, color: 'var(--brand-cyan)' },
-                    { name: 'OPTIMAL SUPPORT RETEST', entry: 0.0225, sl: 0.0190, tp: 0.0550, color: 'var(--brand-emerald)' },
-                    { name: 'ACCUMULATION DIP', entry: 0.0180, sl: 0.0150, tp: 0.0750, color: 'var(--brand-amber)' }
-                ],
-                summary: "Parallel EVM high-throughput Layer-1 with 10,000 TPS capability. Fully operational token economy with streaming OKX WebSocket liquidity."
-            },
-            SOL: {
-                ticker: 'SOL', name: 'Solana', type: 'CRYPTO', classType: 'L1 CRYPTO',
-                price: 103.50, change: '+6.2%',
-                logo: 'S', theme: '#00ffa3',
-                defaultVol: 78, defaultDrift: 55, defaultDays: 90,
-                costBasis: 95.00, shares: 350,
-                targetLine: 125.00, stretchLine: 150.00,
-                source: 'Coinbase WebSocket (Live)',
-                stages: [
-                    { label: 'Range Support', price: 92.00 },
-                    { label: 'Psychological $100', price: 100.00 },
-                    { label: 'Structural Pivot', price: 125.00 },
-                    { label: 'Cycle Extension', price: 160.00 }
-                ],
-                tiers: [
-                    { name: 'RANGE CONTINUATION', entry: 102.00, sl: 92.00, tp: 125.00, color: 'var(--brand-cyan)' },
-                    { name: 'DEEP SUPPORT RE-TEST', entry: 95.00, sl: 84.00, tp: 145.00, color: 'var(--brand-emerald)' },
-                    { name: 'MACRO CYCLE ACCUMULATION', entry: 85.00, sl: 72.00, tp: 180.00, color: 'var(--brand-amber)' }
-                ],
-                summary: "Leading decentralized trading and application layer. Sub-100ms trade execution streamed via native Coinbase WebSocket feed."
-            },
-            KASPA: {
-                ticker: 'KAS', name: 'Kaspa BlockDAG', type: 'CRYPTO', classType: 'POW BLOCKDAG',
-                price: 0.0361, change: '+8.9%',
-                logo: 'K', theme: '#00e676',
-                defaultVol: 88, defaultDrift: 65, defaultDays: 90,
-                costBasis: 0.032, shares: 300000,
-                targetLine: 0.045, stretchLine: 0.065,
-                source: 'OKX WebSocket (Live)',
-                stages: [
-                    { label: 'Local Support', price: 0.0310 },
-                    { label: 'Current Consolidation', price: 0.0361 },
-                    { label: 'Resistance Retest', price: 0.0420 },
-                    { label: 'Breakout Extension', price: 0.0550 },
-                    { label: 'Macro Cycle High', price: 0.0850 }
-                ],
-                tiers: [
-                    { name: 'TREND MOMENTUM', entry: 0.0355, sl: 0.0310, tp: 0.0520, color: 'var(--brand-cyan)' },
-                    { name: 'MA SUPPORT RETEST', entry: 0.0330, sl: 0.0290, tp: 0.0650, color: 'var(--brand-emerald)' },
-                    { name: 'VALUE SHAKEOUT', entry: 0.0280, sl: 0.0240, tp: 0.0850, color: 'var(--brand-amber)' }
-                ],
-                summary: "Proof-of-Work BlockDAG pioneer with sub-second GHOSTDAG consensus. Live ticks streamed via OKX Public V5 WebSocket."
-            }
-        };
-
-        let currentAsset = 'BULL';
-        let currentS0 = assetData.BULL.price;
-        let simPathsCount = 1000;
-        let activeChartEngine = 'MC'; // 'MC' or 'TV'
-        let autoSimEnabled = true;
-        let mertonJumpEnabled = false;
-
-        // -------------------------------------------------------------
-        // TOP-LEVEL DOM ELEMENT REFERENCES (Declared First To Avoid TDZ)
-        // -------------------------------------------------------------
-        const canvas = document.getElementById('simCanvas');
-        const ctx = canvas ? canvas.getContext('2d') : null;
-        const volRange = document.getElementById('volRange');
-        const driftRange = document.getElementById('driftRange');
-        const daysRange = document.getElementById('daysRange');
-        const volReadout = document.getElementById('volReadout');
-        const driftReadout = document.getElementById('driftReadout');
-        const daysReadout = document.getElementById('daysReadout');
-        const costBasisInput = document.getElementById('costBasis');
-        const sharesInput = document.getElementById('sharesCount');
-        const probTarget = document.getElementById('probTarget');
-        const probStretch = document.getElementById('probStretch');
-        const hoverInspectBox = document.getElementById('hoverInspectBox');
-
-        function formatPrice(val) {
-            if (val < 0.1) return '$' + val.toFixed(4);
-            if (val < 10) return '$' + val.toFixed(2);
-            return '$' + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-
-        // -------------------------------------------------------------
-        // AUTOMATED SCENARIO ENGINE (1-Click Presets)
-        // -------------------------------------------------------------
-        function applyMacroScenario(evt, scenario) {
-            document.querySelectorAll('.scenario-chip').forEach(c => c.classList.remove('active'));
-            if (evt && evt.currentTarget) {
-                evt.currentTarget.classList.add('active');
-            }
-
-            const baseVol = assetData[currentAsset].defaultVol;
-            const baseDrift = assetData[currentAsset].defaultDrift;
-
-            if (scenario === 'BASE') {
-                animateSliders(baseVol, baseDrift, 90);
-                mertonJumpEnabled = false;
-                const mToggle = document.getElementById('mertonJumpToggle');
-                if (mToggle) mToggle.checked = false;
-            } else if (scenario === 'BULL') {
-                animateSliders(Math.round(baseVol * 1.25), Math.round(Math.max(45, baseDrift * 1.8)), 90);
-                mertonJumpEnabled = false;
-                const mToggle = document.getElementById('mertonJumpToggle');
-                if (mToggle) mToggle.checked = false;
-            } else if (scenario === 'REVERT') {
-                animateSliders(Math.round(baseVol * 0.7), 0, 90);
-                mertonJumpEnabled = false;
-                const mToggle = document.getElementById('mertonJumpToggle');
-                if (mToggle) mToggle.checked = false;
-            } else if (scenario === 'SHOCK') {
-                animateSliders(Math.round(baseVol * 1.6), -35, 90);
-                mertonJumpEnabled = true;
-                const mToggle = document.getElementById('mertonJumpToggle');
-                if (mToggle) mToggle.checked = true;
-            }
-
-            runMonteCarlo();
-        }
-
-        function animateSliders(targetVol, targetDrift, targetDays) {
-            if (volRange) volRange.value = targetVol;
-            if (driftRange) driftRange.value = targetDrift;
-            if (daysRange) daysRange.value = targetDays;
-            if (volReadout) volReadout.textContent = targetVol + '%';
-            if (driftReadout) driftReadout.textContent = (targetDrift >= 0 ? '+' : '') + targetDrift + '%';
-            if (daysReadout) daysReadout.textContent = targetDays + ' Days';
-        }
-
-        function toggleAutoSim(val) {
-            autoSimEnabled = val;
-        }
-
-        function toggleMertonJumps(val) {
-            mertonJumpEnabled = val;
-            runMonteCarlo();
-        }
-
-        // -------------------------------------------------------------
-        // 1. NATIVE BROWSER WEBSOCKET ENGINE
-        // -------------------------------------------------------------
-        const LiveWebSockets = {
-            coinbaseWS: null,
-            okxWS: null,
-            tickCount: 0,
-            lastPingTime: 0,
-
-            init() {
-                this.connectCoinbase();
-                this.connectOKX();
-                this.startThroughputMonitor();
-            },
-
-            connectCoinbase() {
-                try {
-                    this.coinbaseWS = new WebSocket('wss://ws-feed.exchange.coinbase.com');
-                    this.coinbaseWS.onopen = () => {
-                        const subMsg = { type: 'subscribe', product_ids: ['SOL-USD'], channels: ['ticker'] };
-                        this.coinbaseWS.send(JSON.stringify(subMsg));
-                        this.updateStatus();
-                    };
-
-                    this.coinbaseWS.onmessage = (event) => {
-                        try {
-                            const data = JSON.parse(event.data);
-                            if (data.type === 'ticker' && data.price) {
-                                const price = parseFloat(data.price);
-                                this.tickCount++;
-                                MarketOracle.applyLivePrice('SOL', price, 'Coinbase WS (Live)');
-                            }
-                        } catch(e) {}
-                    };
-
-                    this.coinbaseWS.onclose = () => { setTimeout(() => this.connectCoinbase(), 5000); };
-                } catch(err) {}
-            },
-
-            connectOKX() {
-                try {
-                    this.okxWS = new WebSocket('wss://ws.okx.com:8443/ws/v5/public');
-                    this.okxWS.onopen = () => {
-                        const subMsg = {
-                            op: 'subscribe',
-                            args: [
-                                { channel: 'tickers', instId: 'KAS-USDT' },
-                                { channel: 'tickers', instId: 'MON-USDT' },
-                                { channel: 'tickers', instId: 'SOL-USDT' }
-                            ]
-                        };
-                        this.okxWS.send(JSON.stringify(subMsg));
-                        this.updateStatus();
-
-                        setInterval(() => {
-                            if (this.okxWS && this.okxWS.readyState === WebSocket.OPEN) {
-                                this.lastPingTime = performance.now();
-                                this.okxWS.send('ping');
-                            }
-                        }, 20000);
-                    };
-
-                    this.okxWS.onmessage = (event) => {
-                        if (event.data === 'pong') {
-                            const pingMs = Math.round(performance.now() - this.lastPingTime);
-                            const badge = document.getElementById('wsLatencyBadge');
-                            if (badge) badge.textContent = `WS PING: ${pingMs}ms`;
-                            return;
-                        }
-
-                        try {
-                            const json = JSON.parse(event.data);
-                            if (json.data && json.data.length > 0) {
-                                const tick = json.data[0];
-                                const price = parseFloat(tick.last);
-                                this.tickCount++;
-
-                                if (tick.instId === 'KAS-USDT') {
-                                    MarketOracle.applyLivePrice('KASPA', price, 'OKX WS (Live)');
-                                } else if (tick.instId === 'MON-USDT') {
-                                    MarketOracle.applyLivePrice('MONAD', price, 'OKX WS (Live)');
-                                } else if (tick.instId === 'SOL-USDT' && (!this.coinbaseWS || this.coinbaseWS.readyState !== WebSocket.OPEN)) {
-                                    MarketOracle.applyLivePrice('SOL', price, 'OKX WS (Live)');
-                                }
-                            }
-                        } catch(e) {}
-                    };
-
-                    this.okxWS.onclose = () => { setTimeout(() => this.connectOKX(), 5000); };
-                } catch(err) {}
-            },
-
-            updateStatus() {
-                const isCbOpen = this.coinbaseWS && this.coinbaseWS.readyState === WebSocket.OPEN;
-                const isOkxOpen = this.okxWS && this.okxWS.readyState === WebSocket.OPEN;
-                const dot = document.getElementById('wsConnectionDot');
-
-                if (isCbOpen || isOkxOpen) {
-                    if (dot) {
-                        dot.style.background = 'var(--brand-emerald)';
-                        dot.style.boxShadow = '0 0 12px var(--brand-emerald)';
-                    }
-                    const dock = document.getElementById('dockStatus');
-                    if (dock) dock.textContent = `AUTO-SIMULATION ENGINE ACTIVE • COINBASE & OKX STREAMING`;
-                }
-            },
-
-            startThroughputMonitor() {
-                setInterval(() => {
-                    const tps = this.tickCount;
-                    this.tickCount = 0;
-                    const b = document.getElementById('wsThroughputBadge');
-                    if (b) b.textContent = `${Math.max(1, tps)} TICKS/SEC`;
-                }, 1000);
-            }
-        };
-
-        // -------------------------------------------------------------
-        // 2. MARKET ORACLE (Fallback & Stocks)
-        // -------------------------------------------------------------
-        const MarketOracle = {
-            async fetchRealTimeData(isManual = false) {
-                const tsEl = document.getElementById('oracleTimestamp');
-                if (tsEl) tsEl.textContent = 'Syncing REST endpoints...';
-
-                const [yahooBull, yahooHood, yahooCoin] = await Promise.all([
-                    this.fetchYahooProxy('BULL'),
-                    this.fetchYahooProxy('HOOD'),
-                    this.fetchYahooProxy('COIN')
-                ]);
-
-                if (yahooBull && yahooBull > 0) this.applyLivePrice('BULL', yahooBull, 'Yahoo Finance Proxy');
-                if (yahooHood && yahooHood > 0) this.applyLivePrice('HOOD', yahooHood, 'Yahoo Finance Proxy');
-                if (yahooCoin && yahooCoin > 0) this.applyLivePrice('COIN', yahooCoin, 'Yahoo Finance Proxy');
-
-                const timeStr = new Date().toLocaleTimeString();
-                if (tsEl) tsEl.textContent = `Live Stream • ${timeStr}`;
-
-                if (isManual) {
-                    LiveWebSockets.init();
-                    const status = document.getElementById('dockStatus');
-                    if (status) {
-                        status.textContent = 'ORACLE REFRESHED: WEBSOCKETS RE-CONNECTED';
-                        setTimeout(() => {
-                            status.textContent = 'AUTO-SIMULATION ENGINE ACTIVE • COINBASE & OKX STREAMING';
-                        }, 3000);
-                    }
-                }
-
-                renderRibbon();
-                const compView = document.getElementById('comparison-view');
-                if (compView && compView.classList.contains('active')) {
-                    renderComparison();
-                }
-            },
-
-            async fetchYahooProxy(ticker) {
-                try {
-                    const yUrl = encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1d`);
-                    const res = await fetch(`https://api.allorigins.win/raw?url=${yUrl}`);
-                    if (!res.ok) return null;
-                    const json = await res.json();
-                    return json.chart.result[0].meta.regularMarketPrice;
-                } catch(e) { return null; }
-            },
-
-            applyLivePrice(key, price, source) {
-                if (!assetData[key]) return;
-                const old = assetData[key].price;
-                assetData[key].price = price;
-                assetData[key].source = source;
-
-                if (key === currentAsset) {
-                    currentS0 = price;
-                    const priceEl = document.getElementById('liveSpotPrice');
-                    if (priceEl) {
-                        priceEl.textContent = formatPrice(price);
-                        if (price > old) {
-                            priceEl.classList.add('flash-up');
-                            setTimeout(() => priceEl.classList.remove('flash-up'), 500);
-                        } else if (price < old) {
-                            priceEl.classList.add('flash-down');
-                            setTimeout(() => priceEl.classList.remove('flash-down'), 500);
-                        }
-                    }
-
-                    TradingViewChartEngine.updateLiveTick(price);
-                    updateBreakEven();
-
-                    if (autoSimEnabled && activeChartEngine === 'MC') {
-                        runMonteCarlo();
-                    }
-                }
-            },
-
-            initMicroTicks() {
-                setInterval(() => {
-                    ['BULL', 'HOOD', 'COIN'].forEach(k => {
-                        if (Math.random() > 0.45) {
-                            const driftBias = (assetData[k].defaultDrift / 100) * 0.00006;
-                            const volNoise = (Math.random() - 0.495) * (assetData[k].defaultVol / 100) * 0.0006;
-                            assetData[k].price = Math.max(0.01, assetData[k].price * (1 + driftBias + volNoise));
-                        }
-                    });
-
-                    const termView = document.getElementById('terminal-view');
-                    if (termView && termView.classList.contains('active')) {
-                        const curPrice = assetData[currentAsset].price;
-                        currentS0 = curPrice;
-                        const priceEl = document.getElementById('liveSpotPrice');
-                        if (priceEl) priceEl.textContent = formatPrice(curPrice);
-                        TradingViewChartEngine.updateLiveTick(curPrice);
-                        updateBreakEven();
-
-                        if (autoSimEnabled && activeChartEngine === 'MC') {
-                            runMonteCarlo();
-                        }
-                    }
-
-                    renderRibbon();
-                }, 2600);
-            }
-        };
-
-        // -------------------------------------------------------------
-        // 3. TRADINGVIEW LIGHTWEIGHT CHARTS
-        // -------------------------------------------------------------
-        const TradingViewChartEngine = {
-            chart: null,
-            candleSeries: null,
-            volumeSeries: null,
-            ema20Series: null,
-            ema50Series: null,
-            latestCandle: null,
-
-            init() {
-                const container = document.getElementById('tvChartContainer');
-                if (!container || typeof LightweightCharts === 'undefined') return;
-
-                container.innerHTML = '';
-                this.chart = LightweightCharts.createChart(container, {
-                    layout: {
-                        background: { color: '#030508' },
-                        textColor: '#94a3b8',
-                        fontFamily: "'Azeret Mono', monospace",
-                    },
-                    grid: {
-                        vertLines: { color: 'rgba(255, 255, 255, 0.03)' },
-                        horzLines: { color: 'rgba(255, 255, 255, 0.03)' },
-                    },
-                    crosshair: {
-                        mode: LightweightCharts.CrosshairMode.Normal,
-                    },
-                    rightPriceScale: {
-                        borderColor: 'rgba(255, 255, 255, 0.08)',
-                    },
-                    timeScale: {
-                        borderColor: 'rgba(255, 255, 255, 0.08)',
-                        timeVisible: true,
-                    },
-                });
-
-                this.candleSeries = this.chart.addCandlestickSeries({
-                    upColor: '#00e676',
-                    downColor: '#ff3366',
-                    borderUpColor: '#00e676',
-                    borderDownColor: '#ff3366',
-                    wickUpColor: '#00e676',
-                    wickDownColor: '#ff3366',
-                });
-
-                this.volumeSeries = this.chart.addHistogramSeries({
-                    color: 'rgba(0, 102, 255, 0.25)',
-                    priceFormat: { type: 'volume' },
-                    priceScaleId: '',
-                });
-                this.volumeSeries.priceScale().applyOptions({
-                    scaleMargins: { top: 0.82, bottom: 0 },
-                });
-
-                this.ema20Series = this.chart.addLineSeries({
-                    color: '#00e5ff',
-                    lineWidth: 2,
-                    title: 'EMA 20',
-                });
-
-                this.ema50Series = this.chart.addLineSeries({
-                    color: '#ffb300',
-                    lineWidth: 2,
-                    title: 'EMA 50',
-                });
-
-                this.loadAssetCandles(currentAsset);
-            },
-
-            loadAssetCandles(assetKey) {
-                if (!this.candleSeries) return;
-
-                const basePrice = assetData[assetKey].price;
-                const vol = assetData[assetKey].defaultVol / 100;
-                const candles = [];
-                const volumes = [];
-                const ema20 = [];
-                const ema50 = [];
-
-                const days = 90;
-                let currentP = basePrice * (1 - (assetData[assetKey].defaultDrift / 100) * 0.25);
-                const now = new Date();
-
-                for (let i = days; i >= 0; i--) {
-                    const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-                    const timeStr = date.toISOString().split('T')[0];
-
-                    const open = currentP;
-                    const change = (Math.random() - 0.48) * vol * currentP * 0.15;
-                    const close = i === 0 ? basePrice : Math.max(0.001, open + change);
-                    const high = Math.max(open, close) + Math.random() * vol * currentP * 0.08;
-                    const low = Math.min(open, close) - Math.random() * vol * currentP * 0.08;
-
-                    candles.push({ time: timeStr, open, high, low, close });
-                    volumes.push({
-                        time: timeStr,
-                        value: Math.floor(Math.random() * 500000 + 100000),
-                        color: close >= open ? 'rgba(0, 230, 118, 0.2)' : 'rgba(255, 51, 102, 0.2)'
-                    });
-
-                    currentP = close;
-                }
-
-                this.candleSeries.setData(candles);
-                this.volumeSeries.setData(volumes);
-                this.latestCandle = { ...candles[candles.length - 1] };
-
-                const k20 = 2 / (20 + 1);
-                const k50 = 2 / (50 + 1);
-                let prevEma20 = candles[0].close;
-                let prevEma50 = candles[0].close;
-
-                candles.forEach(c => {
-                    prevEma20 = c.close * k20 + prevEma20 * (1 - k20);
-                    prevEma50 = c.close * k50 + prevEma50 * (1 - k50);
-                    ema20.push({ time: c.time, value: prevEma20 });
-                    ema50.push({ time: c.time, value: prevEma50 });
-                });
-
-                this.ema20Series.setData(ema20);
-                this.ema50Series.setData(ema50);
-                this.chart.timeScale().fitContent();
-            },
-
-            updateLiveTick(price) {
-                if (!this.candleSeries || !this.latestCandle) return;
-                this.latestCandle.close = price;
-                if (price > this.latestCandle.high) this.latestCandle.high = price;
-                if (price < this.latestCandle.low) this.latestCandle.low = price;
-                this.candleSeries.update(this.latestCandle);
-            },
-
-            resize() {
-                if (!this.chart) return;
-                const container = document.getElementById('tvChartContainer');
-                if (container && container.clientWidth > 0) {
-                    this.chart.resize(container.clientWidth, container.clientHeight);
-                    this.chart.timeScale().fitContent();
-                }
-            }
-        };
-
-        function switchChartEngine(engine) {
-            activeChartEngine = engine;
-            const mcBtn = document.getElementById('btnModeMonteCarlo');
-            const tvBtn = document.getElementById('btnModeCandlestick');
-            const mcContainer = document.getElementById('simCanvasContainer');
-            const tvContainer = document.getElementById('tvChartContainer');
-            const mcPresets = document.getElementById('mcPresetsBar');
-
-            if (engine === 'TV') {
-                if (mcBtn) mcBtn.classList.remove('active');
-                if (tvBtn) tvBtn.classList.add('active');
-                if (mcContainer) mcContainer.style.display = 'none';
-                if (tvContainer) tvContainer.style.display = 'block';
-                if (mcPresets) mcPresets.style.display = 'none';
-
-                if (!TradingViewChartEngine.chart) {
-                    TradingViewChartEngine.init();
-                } else {
-                    TradingViewChartEngine.loadAssetCandles(currentAsset);
-                    TradingViewChartEngine.resize();
-                }
-            } else {
-                if (tvBtn) tvBtn.classList.remove('active');
-                if (mcBtn) mcBtn.classList.add('active');
-                if (tvContainer) tvContainer.style.display = 'none';
-                if (mcContainer) mcContainer.style.display = 'block';
-                if (mcPresets) mcPresets.style.display = 'flex';
-
-                resizeCanvas();
-                runMonteCarlo();
-            }
-        }
-
-        // -------------------------------------------------------------
-        // 4. ADVANCED QUANTITATIVE ENGINE (Fan Bands & Bell Curve)
-        // -------------------------------------------------------------
-        function resizeCanvas() {
-            if (!canvas || !ctx) return;
-            const rect = canvas.getBoundingClientRect();
-            const w = rect.width || canvas.clientWidth || 800;
-            const h = rect.height || canvas.clientHeight || 380;
-            const dpr = window.devicePixelRatio || 1;
-            canvas.width = w * dpr;
-            canvas.height = h * dpr;
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        }
-
-        window.addEventListener('resize', () => {
-            const termView = document.getElementById('terminal-view');
-            if (termView && termView.classList.contains('active')) {
-                if (activeChartEngine === 'TV') {
-                    TradingViewChartEngine.resize();
-                } else {
-                    resizeCanvas();
-                    runMonteCarlo();
-                }
-            }
-        });
-
-        function randn() {
-            let u = 0, v = 0;
-            while (u === 0) u = Math.random();
-            while (v === 0) v = Math.random();
-            return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-        }
-
-        function runMonteCarlo() {
-            if (!canvas || !ctx) return;
-            const data = assetData[currentAsset];
-            if (!data) return;
-
-            const rect = canvas.getBoundingClientRect();
-            const W = rect.width || canvas.clientWidth || 800;
-            const H = rect.height || canvas.clientHeight || 380;
-            const paths = simPathsCount;
-            const days = parseInt(daysRange ? daysRange.value : 90) || 90;
-            const sigma = parseInt(volRange ? volRange.value : 62) / 100;
-            const mu = parseInt(driftRange ? driftRange.value : 28) / 100;
-            const dt = 1 / 365;
-
-            const histW = 85;
-            const simW = Math.max(100, W - histW - 20);
-
-            ctx.clearRect(0, 0, W, H);
-
-            // Subtle Grid
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
-            ctx.lineWidth = 1;
-            for (let y = 30; y < H; y += 40) {
-                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-            }
-
-            let terminalPrices = [];
-            let hitTargetCount = 0;
-            let hitStretchCount = 0;
-
-            const extremeUp = currentS0 * Math.exp(mu*(days/365) + sigma * Math.sqrt(days/365) * 3);
-            const extremeDown = currentS0 * Math.exp(mu*(days/365) - sigma * Math.sqrt(days/365) * 2.5);
-
-            const yMin = Math.max(0.0001, extremeDown * 0.75);
-            const yMax = extremeUp * 1.15;
-
-            function scaleY(val) { return H - ((val - yMin) / (yMax - yMin)) * (H - 50) - 25; }
-            function scaleX(d) { return (d / days) * (simW - 20) + 16; }
-
-            // Vertical divider
-            ctx.save();
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-            ctx.setLineDash([3, 3]);
-            ctx.beginPath();
-            ctx.moveTo(simW + 5, 10);
-            ctx.lineTo(simW + 5, H - 10);
-            ctx.stroke();
-            ctx.restore();
-
-            // Target benchmark line
-            const yTgt = scaleY(data.targetLine);
-            ctx.save();
-            ctx.strokeStyle = data.theme;
-            ctx.lineWidth = 1.5;
-            ctx.setLineDash([4, 4]);
-            ctx.beginPath(); ctx.moveTo(0, yTgt); ctx.lineTo(W - 10, yTgt); ctx.stroke();
-            ctx.fillStyle = data.theme;
-            ctx.font = '10px "Azeret Mono", monospace';
-            ctx.fillText(`TARGET ${formatPrice(data.targetLine)}`, W - 80, yTgt - 4);
-            ctx.restore();
-
-            const lambda = 4.0;
-            const jumpMean = -0.05;
-            const jumpVol = 0.15;
-
-            for (let i = 0; i < paths; i++) {
-                let p = currentS0;
-                let hitTgt = false;
-                let hitStr = false;
-
-                ctx.beginPath();
-                ctx.moveTo(scaleX(0), scaleY(p));
-
-                for (let d = 1; d <= days; d++) {
-                    const z = randn();
-                    let jumpFactor = 0;
-
-                    if (mertonJumpEnabled && Math.random() < lambda * dt) {
-                        jumpFactor = jumpMean + jumpVol * randn();
-                    }
-
-                    p = p * Math.exp((mu - 0.5 * sigma * sigma) * dt + sigma * Math.sqrt(dt) * z + jumpFactor);
-                    if (p >= data.targetLine) hitTgt = true;
-                    if (p >= data.stretchLine) hitStr = true;
-                    ctx.lineTo(scaleX(d), scaleY(p));
-                }
-                terminalPrices.push(p);
-                if (hitTgt) hitTargetCount++;
-                if (hitStr) hitStretchCount++;
-
-                ctx.strokeStyle = hitTgt ? 'rgba(0, 229, 255, 0.045)' : 'rgba(0, 102, 255, 0.022)';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            }
-
-            terminalPrices.sort((a, b) => a - b);
-            const p50 = terminalPrices[Math.floor(paths * 0.50)] || currentS0;
-            const p95 = terminalPrices[Math.floor(paths * 0.95)] || currentS0;
-
-            // Shaded 10th-90th Quantile Confidence Cloud
-            ctx.save();
-            ctx.beginPath();
-            ctx.moveTo(scaleX(0), scaleY(currentS0));
-            for (let d = 1; d <= days; d++) {
-                const driftTerm = (mu - 0.5 * sigma * sigma) * (d * dt);
-                const upperP = currentS0 * Math.exp(driftTerm + sigma * Math.sqrt(d * dt) * 1.28);
-                ctx.lineTo(scaleX(d), scaleY(upperP));
-            }
-            for (let d = days; d >= 1; d--) {
-                const driftTerm = (mu - 0.5 * sigma * sigma) * (d * dt);
-                const lowerP = currentS0 * Math.exp(driftTerm - sigma * Math.sqrt(d * dt) * 1.28);
-                ctx.lineTo(scaleX(d), scaleY(lowerP));
-            }
-            ctx.closePath();
-            ctx.fillStyle = 'rgba(0, 102, 255, 0.07)';
-            ctx.fill();
-            ctx.restore();
-
-            // Expected 50th percentile median trajectory
-            ctx.save();
-            ctx.strokeStyle = '#00e5ff';
-            ctx.lineWidth = 2.5;
-            ctx.shadowColor = '#00e5ff';
-            ctx.shadowBlur = 10;
-            ctx.beginPath();
-            ctx.moveTo(scaleX(0), scaleY(currentS0));
-            let medP = currentS0;
-            for (let d = 1; d <= days; d++) {
-                medP = medP * Math.exp((mu - 0.5 * sigma * sigma) * dt);
-                ctx.lineTo(scaleX(d), scaleY(medP));
-            }
-            ctx.stroke();
-            ctx.restore();
-
-            // Right-side Terminal Density Bell Curve / Histogram
-            const binsCount = 28;
-            const binSize = (yMax - yMin) / binsCount;
-            const bins = new Array(binsCount).fill(0);
-
-            terminalPrices.forEach(p => {
-                const bIdx = Math.min(binsCount - 1, Math.max(0, Math.floor((p - yMin) / binSize)));
-                bins[bIdx]++;
-            });
-
-            const maxBinCount = Math.max(...bins, 1);
-            const histStartX = simW + 12;
-
-            for (let b = 0; b < binsCount; b++) {
-                const binPrice = yMin + (b + 0.5) * binSize;
-                const binY = scaleY(binPrice);
-                const binHeight = Math.max(3, (H / binsCount) * 0.85);
-                const binBarWidth = (bins[b] / maxBinCount) * (histW - 20);
-
-                const isProfitZone = binPrice >= data.targetLine;
-                ctx.fillStyle = isProfitZone ? 'rgba(0, 230, 118, 0.45)' : 'rgba(0, 102, 255, 0.3)';
-                ctx.fillRect(histStartX, binY - binHeight / 2, binBarWidth, binHeight);
-            }
-
-            // Target Probability Readouts
-            if (probTarget) probTarget.textContent = ((hitTargetCount / paths) * 100).toFixed(1) + '%';
-            if (probStretch) probStretch.textContent = ((hitStretchCount / paths) * 100).toFixed(1) + '%';
-            const p50El = document.getElementById('p50Val');
-            if (p50El) p50El.textContent = formatPrice(p50);
-            const p95El = document.getElementById('p95Val');
-            if (p95El) p95El.textContent = formatPrice(p95);
-        }
-
-        if (canvas) {
-            canvas.addEventListener('mousemove', (e) => {
-                const rect = canvas.getBoundingClientRect();
-                const mouseX = e.clientX - rect.left;
-                const simW = Math.max(100, rect.width - 105);
-                const days = parseInt(daysRange ? daysRange.value : 90) || 90;
-                const dayHover = Math.min(days, Math.max(0, Math.round((mouseX / simW) * days)));
-                const sigma = parseInt(volRange ? volRange.value : 62) / 100;
-                const mu = parseInt(driftRange ? driftRange.value : 28) / 100;
-                const dt = 1 / 365;
-                const estP = currentS0 * Math.exp((mu - 0.5 * sigma * sigma) * (dayHover * dt));
-
-                if (hoverInspectBox) {
-                    hoverInspectBox.innerHTML = `
-                        <span>Day <strong>${dayHover}</strong> of ${days}</span>
-                        <span>Median: <strong>${formatPrice(estP)}</strong></span>
-                    `;
-                }
-            });
-        }
-
-        // -------------------------------------------------------------
-        // 5. BREAK-EVEN CALCULATOR & RIBBON
-        // -------------------------------------------------------------
-        function updateBreakEven() {
-            const data = assetData[currentAsset];
-            if (!data) return;
-
-            const basis = parseFloat(costBasisInput ? costBasisInput.value : data.costBasis) || data.costBasis;
-            const shares = parseFloat(sharesInput ? sharesInput.value : data.shares) || data.shares;
-
-            const currentDiff = currentS0 - basis;
-            const currentPct = (currentDiff / basis) * 100;
-            const totalDollarDiff = currentDiff * shares;
-
-            const pnlHero = document.getElementById('currentPnl');
-            if (pnlHero) {
-                pnlHero.textContent = `${totalDollarDiff >= 0 ? '+' : '-'}$${Math.abs(totalDollarDiff).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${currentPct.toFixed(2)}%)`;
-                pnlHero.style.color = totalDollarDiff >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)';
-            }
-
-            const dist = ((basis - currentS0) / currentS0) * 100;
-            const distEl = document.getElementById('distToBE');
-            if (distEl) {
-                distEl.textContent = dist > 0 
-                    ? `Requires +${dist.toFixed(2)}% push from current spot (${formatPrice(currentS0)}) to Parity (${formatPrice(basis)})`
-                    : `Currently in profit by +${Math.abs(dist).toFixed(2)}% above entry base!`;
-            }
-
-            const tbody = document.getElementById('matrixBody');
-            if (tbody) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td style="font-weight: 700; color: var(--brand-cyan);">Current Spot</td>
-                        <td>${formatPrice(currentS0)}</td>
-                        <td style="color: ${currentPct >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight:700;">${currentPct >= 0 ? '+' : ''}${currentPct.toFixed(1)}%</td>
-                        <td style="color: ${totalDollarDiff >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight:700;">${totalDollarDiff >= 0 ? '+' : '-'}$${Math.abs(totalDollarDiff).toLocaleString('en-US', {maximumFractionDigits:0})}</td>
-                    </tr>
-                `;
-
-                data.stages.forEach(st => {
-                    const gainPct = ((st.price - basis) / basis) * 100;
-                    const netPnl = (st.price - basis) * shares;
-                    const tr = document.createElement('tr');
-                    if (Math.abs(st.price - basis) < 0.0001) tr.style.background = 'rgba(255, 179, 0, 0.08)';
-
-                    tr.innerHTML = `
-                        <td style="font-weight: 600; color: ${Math.abs(st.price - basis) < 0.0001 ? 'var(--brand-amber)' : 'var(--text-primary)'};">${st.label}</td>
-                        <td>${formatPrice(st.price)}</td>
-                        <td style="color: ${gainPct >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight: 700;">${gainPct >= 0 ? '+' : ''}${gainPct.toFixed(1)}%</td>
-                        <td style="color: ${netPnl >= 0 ? 'var(--brand-emerald)' : 'var(--brand-crimson)'}; font-weight: 700;">${netPnl >= 0 ? '+' : '-'}$${Math.abs(netPnl).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            }
-        }
-
-        function renderRibbon() {
-            const track = document.getElementById('ribbonTrack');
-            if (!track) return;
-            track.innerHTML = '';
-
-            Object.keys(assetData).forEach(k => {
-                const item = assetData[k];
-                const div = document.createElement('div');
-                div.className = 'ribbon-item';
-                div.onclick = () => {
-                    const btn = document.querySelector(`.nav-pill[data-target="${k}"]`);
-                    if (btn) btn.click();
-                };
-
-                div.innerHTML = `
-                    <span class="ribbon-symbol">${item.ticker}</span>
-                    <span class="ribbon-price">${formatPrice(item.price)}</span>
-                    <span style="color: var(--brand-emerald); font-weight:700;">${item.change}</span>
-                    <span class="ribbon-tag-source">${item.source.split(' ')[0]}</span>
-                `;
-                track.appendChild(div);
-            });
-        }
-
-        // -------------------------------------------------------------
-        // 6. UI CONTROLLERS & TABS BINDINGS
-        // -------------------------------------------------------------
-        document.querySelectorAll('.nav-pill').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
-                const targetBtn = e.target.closest('.nav-pill');
-                if (!targetBtn) return;
-                targetBtn.classList.add('active');
-
-                const target = targetBtn.getAttribute('data-target');
-                document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
-
-                if (target === 'COMPARISON') {
-                    const compView = document.getElementById('comparison-view');
-                    if (compView) compView.classList.add('active');
-                    renderComparison();
-                } else {
-                    const termView = document.getElementById('terminal-view');
-                    if (termView) termView.classList.add('active');
-                    loadAsset(target);
-                }
-            });
-        });
-
-        document.querySelectorAll('#timeframePresets .segment-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('#timeframePresets .segment-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-                const days = e.target.getAttribute('data-days');
-                if (daysRange) daysRange.value = days;
-                if (daysReadout) daysReadout.textContent = days + ' Days';
-                runMonteCarlo();
-            });
-        });
-
-        document.querySelectorAll('#pathsPresets .segment-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('#pathsPresets .segment-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-                simPathsCount = parseInt(e.target.getAttribute('data-paths'));
-                const b = document.getElementById('pathsBadge');
-                if (b) b.textContent = simPathsCount.toLocaleString() + ' PATHS';
-                runMonteCarlo();
-            });
-        });
-
-        function loadAsset(key) {
-            if (!assetData[key]) return;
-            currentAsset = key;
-            const data = assetData[key];
-            currentS0 = data.price;
-
-            const badge = document.getElementById('assetBadge');
-            if (badge) {
-                badge.textContent = data.logo;
-                badge.style.background = `linear-gradient(135deg, ${data.theme}, #090d16)`;
-            }
-            const ticker = document.getElementById('assetTicker');
-            if (ticker) ticker.textContent = data.ticker;
-            const title = document.getElementById('assetFullTitle');
-            if (title) title.textContent = data.name;
-            const tag = document.getElementById('assetClassTag');
-            if (tag) tag.textContent = data.classType;
-
-            const priceEl = document.getElementById('liveSpotPrice');
-            if (priceEl) priceEl.textContent = formatPrice(data.price);
-            const deltaEl = document.getElementById('liveSpotDelta');
-            if (deltaEl) deltaEl.textContent = data.change + ' (30D)';
-            const oracle = document.getElementById('oracleSourceLabel');
-            if (oracle) oracle.textContent = `${data.source} • AUTO-SYNC`;
-
-            if (volRange) volRange.value = data.defaultVol;
-            if (driftRange) driftRange.value = data.defaultDrift;
-            if (daysRange) daysRange.value = data.defaultDays;
-            if (volReadout) volReadout.textContent = data.defaultVol + '%';
-            if (driftReadout) driftReadout.textContent = (data.defaultDrift >= 0 ? '+' : '') + data.defaultDrift + '%';
-            if (daysReadout) daysReadout.textContent = data.defaultDays + ' Days';
-
-            document.querySelectorAll('#timeframePresets .segment-btn').forEach(b => {
-                b.classList.toggle('active', b.getAttribute('data-days') == data.defaultDays);
-            });
-
-            if (costBasisInput) costBasisInput.value = data.costBasis;
-            if (sharesInput) sharesInput.value = data.shares;
-            const beTitle = document.getElementById('beTitle');
-            if (beTitle) beTitle.textContent = `Analytics (${formatPrice(data.costBasis)} Basis)`;
-            const tgtLabel = document.getElementById('probTargetLabel');
-            if (tgtLabel) tgtLabel.textContent = `P(Reach ≥ ${formatPrice(data.targetLine)})`;
-            const strLabel = document.getElementById('probStretchLabel');
-            if (strLabel) strLabel.textContent = `P(Reach ≥ ${formatPrice(data.stretchLine)})`;
-
-            renderTiers(data);
-            updateBreakEven();
-
-            if (activeChartEngine === 'TV') {
-                TradingViewChartEngine.loadAssetCandles(key);
-            } else {
-                resizeCanvas();
-                runMonteCarlo();
-            }
-        }
-
-        function renderTiers(data) {
-            const container = document.getElementById('executionTiersContainer');
-            if (!container) return;
-            container.innerHTML = '';
-
-            data.tiers.forEach((tier, i) => {
-                const el = document.createElement('div');
-                el.className = 'tier-strategy-card' + (i === 1 ? ' active' : '');
-
-                const rr = ((tier.tp - tier.entry) / (tier.entry - tier.sl)).toFixed(2);
-
-                el.innerHTML = `
-                    <div class="tier-card-title">
-                        <span style="color: ${tier.color};">TIER ${i+1}: ${tier.name}</span>
-                        <span>${formatPrice(tier.entry)}</span>
-                    </div>
-                    <div class="tier-card-specs">
-                        <span>Target: ${formatPrice(tier.tp)}</span>
-                        <span>Stop: ${formatPrice(tier.sl)}</span>
-                        <span style="color: var(--brand-emerald); font-weight: 700;">R:R = 1 : ${Math.abs(rr)}</span>
-                    </div>
-                `;
-
-                el.onclick = () => {
-                    document.querySelectorAll('.tier-strategy-card').forEach(c => c.classList.remove('active'));
-                    el.classList.add('active');
-                    const rrVal = Math.max(0.1, Math.abs(rr));
-                    const winRate = 0.58;
-                    const halfKelly = Math.max(0, ((winRate - (1 - winRate) / rrVal) * 0.5) * 100).toFixed(1);
-
-                    const kellyEl = document.getElementById('kellyRecommendation');
-                    if (kellyEl) {
-                        kellyEl.innerHTML = 
-                            `Selected: <strong>${formatPrice(tier.entry)}</strong> | Stop Loss: <strong>${formatPrice(tier.sl)}</strong> | Target: <strong>${formatPrice(tier.tp)}</strong> (R:R <strong>1:${rrVal}</strong>)<br>
-                             Half-Kelly Capital Allocation: <strong style="color: var(--brand-cyan)">${halfKelly}% of Portfolio</strong> (Max Risk Limit 2.0% equity)`;
-                    }
-                };
-                container.appendChild(el);
-            });
-
-            const active = container.querySelector('.active') || container.firstChild;
-            if (active) active.click();
-        }
-
-        function renderComparison() {
-            const tbody = document.getElementById('comparisonTableBody');
-            const cardsContainer = document.getElementById('comparisonCardsContainer');
-            const visualBars = document.getElementById('visualBarsList');
-
-            if (!tbody || !cardsContainer || !visualBars) return;
-
-            tbody.innerHTML = '';
-            cardsContainer.innerHTML = '';
-            visualBars.innerHTML = '';
-
-            const keys = Object.keys(assetData);
-            let maxDrift = 1;
-            keys.forEach(k => { if (assetData[k].defaultDrift > maxDrift) maxDrift = assetData[k].defaultDrift; });
-
-            keys.forEach(key => {
-                const a = assetData[key];
-                const drift = a.defaultDrift / 100;
-                const vol = a.defaultVol / 100;
-                const dt = 90 / 365;
-
-                const medPath = a.price * Math.exp((drift - 0.5 * vol * vol) * dt);
-                const p95Path = a.price * Math.exp((drift - 0.5 * vol * vol) * dt + vol * Math.sqrt(dt) * 1.645);
-                const rrScore = (a.defaultDrift / a.defaultVol).toFixed(2);
-
-                const barWidth = Math.min(100, Math.max(6, (a.defaultDrift / maxDrift) * 100));
-                visualBars.innerHTML += `
-                    <div class="visual-bar-item">
-                        <div class="bar-label-symbol" style="color: ${a.theme}">${a.ticker}</div>
-                        <div class="bar-track-shell">
-                            <div class="bar-fill-element" style="width: ${barWidth}%; background: linear-gradient(90deg, #0052ff, ${a.theme});"></div>
-                        </div>
-                        <div class="bar-stat-readout">+${a.defaultDrift}% Drift</div>
-                    </div>
-                `;
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td style="font-weight: 800; color: ${a.theme}; cursor: pointer;" onclick="document.querySelector('.nav-pill[data-target=${key}]').click()">${a.ticker}</td>
-                        <td><span class="tag ${a.type === 'CRYPTO' ? 'tag-purple' : 'tag-blue'}">${a.classType}</span></td>
-                        <td style="font-weight: 700;">${formatPrice(a.price)}</td>
-                        <td style="color: var(--brand-cyan); font-size: 11px;">${a.source}</td>
-                        <td>${a.defaultVol}%</td>
-                        <td style="color: var(--brand-emerald); font-weight: 700;">+${a.defaultDrift}%</td>
-                        <td>${formatPrice(medPath)}</td>
-                        <td style="color: var(--brand-amber); font-weight: 700;">${formatPrice(p95Path)}</td>
-                        <td style="font-weight: 800; color: var(--brand-cyan);">${rrScore}</td>
-                    </tr>
-                `;
-
-                cardsContainer.innerHTML += `
-                    <div class="glass-card" style="padding: 18px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <span style="font-size: 13px; font-weight: 800; color: ${a.theme}; font-family: var(--font-mono);">${a.ticker} • ${a.name}</span>
-                            <span class="tag ${a.type === 'CRYPTO' ? 'tag-purple' : 'tag-blue'}">${a.classType}</span>
-                        </div>
-                        <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
-                            ${a.summary}
-                        </p>
-                    </div>
-                `;
-            });
-        }
-
-        function toggleDeployModal(show) {
-            const m = document.getElementById('deployModal');
-            if (m) m.classList.toggle('active', show);
-        }
-        function closeDeployModal(e) {
-            if (e.target.id === 'deployModal') toggleDeployModal(false);
-        }
-
-        if (volRange) volRange.addEventListener('input', (e) => { if (volReadout) volReadout.textContent = e.target.value + '%'; if (activeChartEngine === 'MC') runMonteCarlo(); });
-        if (driftRange) driftRange.addEventListener('input', (e) => { if (driftReadout) driftReadout.textContent = (e.target.value >= 0 ? '+' : '') + e.target.value + '%'; if (activeChartEngine === 'MC') runMonteCarlo(); });
-        if (daysRange) daysRange.addEventListener('input', (e) => { 
-            if (daysReadout) daysReadout.textContent = e.target.value + ' Days';
-            document.querySelectorAll('#timeframePresets .segment-btn').forEach(b => {
-                b.classList.toggle('active', b.getAttribute('data-days') == e.target.value);
-            });
-            if (activeChartEngine === 'MC') runMonteCarlo(); 
-        });
-
-        const rerunBtn = document.getElementById('btnRerun');
-        if (rerunBtn) {
-            rerunBtn.addEventListener('click', () => {
-                if (activeChartEngine === 'MC') runMonteCarlo();
-                else TradingViewChartEngine.loadAssetCandles(currentAsset);
-            });
-        }
-
-        if (costBasisInput) costBasisInput.addEventListener('input', updateBreakEven);
-        if (sharesInput) sharesInput.addEventListener('input', updateBreakEven);
-
-        function shareTerminal() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Webull Quantitative Intelligence Terminal',
-                    text: 'Live Multi-Asset WebSocket Engine: BULL, HOOD, COIN, MONAD, SOL, KAS',
-                    url: window.location.href,
-                }).catch(() => {});
-            } else {
-                navigator.clipboard.writeText(window.location.href);
-                alert('Terminal link copied to clipboard!');
-            }
-        }
-
-        // -------------------------------------------------------------
-        // INITIALIZATION LIFECYCLE (DOMContentLoaded + Window Load)
-        // -------------------------------------------------------------
-        function initApp() {
-            try {
-                renderRibbon();
-                loadAsset('BULL');
-                LiveWebSockets.init();
-                MarketOracle.fetchRealTimeData();
-                MarketOracle.initMicroTicks();
-            } catch(e) {
-                console.error('Initialization error:', e);
-            }
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initApp);
-        } else {
-            initApp();
-        }
-
-        window.addEventListener('load', () => {
-            resizeCanvas();
-            if (activeChartEngine === 'MC') runMonteCarlo();
-        });
-    </script>
+    <!-- Modular Application Logic -->
+    <script src="/js/config.js"></script>
+    <script src="/js/oracle.js"></script>
+    <script src="/js/chart-mc.js"></script>
+    <script src="/js/chart-tv.js"></script>
+    <script src="/js/calculator.js"></script>
+    <script src="/js/pwa.js"></script>
+    <script src="/js/app.js"></script>
 </body>
 </html>

@@ -1,0 +1,63 @@
+{
+  "name": "Webull Intelligence Terminal",
+  "short_name": "Webull Pro",
+  "description": "Institutional Quantitative Trading Terminal & Live Multi-Asset WebSocket Engine for Equities & Crypto",
+  "start_url": "/",
+  "id": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#04060a",
+  "theme_color": "#04060a",
+  "lang": "en-US",
+  "categories": ["finance", "business", "productivity"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Webull Corp (BULL)",
+      "short_name": "BULL",
+      "description": "Launch terminal with BULL Monte Carlo & Parity Analytics",
+      "url": "/?asset=BULL",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Monad Network (MON)",
+      "short_name": "MONAD",
+      "description": "Stream live OKX WebSocket feeds for Monad",
+      "url": "/?asset=MONAD",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Solana (SOL)",
+      "short_name": "SOL",
+      "description": "Stream live Coinbase WebSocket ticks for Solana",
+      "url": "/?asset=SOL",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Multi-Asset Matrix",
+      "short_name": "Compare",
+      "description": "Compare risk/reward across all 6 assets",
+      "url": "/?view=comparison",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
