@@ -90,9 +90,19 @@ window.renderTiers = function(data) {
 
             const kellyEl = document.getElementById('kellyRecommendation');
             if (kellyEl) {
-                kellyEl.innerHTML = 
-                    `Selected: <strong>${window.TERMINAL_CONFIG.formatPrice(tier.entry)}</strong> | Stop Loss: <strong>${window.TERMINAL_CONFIG.formatPrice(tier.sl)}</strong> | Target: <strong>${window.TERMINAL_CONFIG.formatPrice(tier.tp)}</strong> (R:R <strong>1:${rrVal}</strong>)<br>
-                     Half-Kelly Capital Allocation: <strong style="color: var(--brand-cyan)">${halfKelly}% of Portfolio</strong> (Max Risk Limit 2.0% equity)`;
+                kellyEl.innerHTML = `
+                    <div class="kelly-trader-pill-grid">
+                        <div><span>ENTRY TRIGGER</span><strong>${window.TERMINAL_CONFIG.formatPrice(tier.entry)}</strong></div>
+                        <div><span>HARD STOP LOSS</span><strong style="color: var(--brand-amber);">${window.TERMINAL_CONFIG.formatPrice(tier.sl)}</strong></div>
+                        <div><span>PROFIT TARGET</span><strong style="color: var(--brand-emerald);">${window.TERMINAL_CONFIG.formatPrice(tier.tp)}</strong></div>
+                        <div><span>RISK / REWARD</span><strong style="color: var(--brand-cyan);">1 : ${rrVal}</strong></div>
+                    </div>
+                    <div class="kelly-guidance-bar">
+                        <span>💡 Optimal Sizing:</span>
+                        <strong style="color: var(--brand-emerald); font-size: 13px;">${halfKelly}% Position Sizing</strong>
+                        <span style="color: var(--text-secondary); font-size: 11px;">(Half-Kelly • 2.0% max account risk limit)</span>
+                    </div>
+                `;
             }
         };
         container.appendChild(el);

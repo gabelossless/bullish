@@ -587,6 +587,181 @@ canvas { width: 100%; height: 100%; display: block; }
     gap: 6px;
 }
 
+/* Trader Signal & Action Card Styling */
+.trader-signal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.trader-signal-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.trader-signal-title {
+    font-weight: 800;
+    color: #fff;
+    font-size: 13px;
+    font-family: var(--font-display);
+    letter-spacing: 0.02em;
+}
+.trader-signal-right {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.trader-metrics-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+    font-family: var(--font-mono);
+}
+.trader-stat-box {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-hairline);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.trader-stat-box:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(0, 229, 255, 0.3);
+}
+.trader-stat-lbl {
+    color: var(--text-tertiary);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.trader-stat-num {
+    font-size: 14px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+.trader-stat-sub {
+    font-size: 10px;
+    margin-top: 1px;
+}
+
+.trader-action-callout {
+    background: linear-gradient(135deg, rgba(0, 102, 255, 0.12), rgba(0, 229, 255, 0.04));
+    border: 1px solid rgba(0, 229, 255, 0.25);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.trader-action-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.action-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--brand-cyan);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+.action-regime-pill {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 7px;
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.trader-levels-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+.trader-level-pill {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-family: var(--font-mono);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.trader-level-pill .pill-lbl {
+    font-size: 8.5px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.trader-level-pill .pill-val {
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.trader-strategy-note {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #e2e8f0;
+}
+.trader-strategy-note strong {
+    color: var(--brand-cyan);
+}
+
+/* Kelly Trader Recommendation Card */
+.kelly-trader-pill-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+}
+.kelly-trader-pill-grid > div {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 7px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border-hairline);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.kelly-trader-pill-grid span {
+    font-size: 9px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+}
+.kelly-trader-pill-grid strong {
+    font-size: 12px;
+}
+.kelly-guidance-bar {
+    background: rgba(0, 230, 118, 0.08);
+    border: 1px solid rgba(0, 230, 118, 0.2);
+    border-radius: 4px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 12px;
+}
+
 /* Collapsible Advanced Quant Tuning Drawer */
 .advanced-tuning-container {
     margin-bottom: 18px;

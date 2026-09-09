@@ -55,9 +55,9 @@ window.loadAsset = function(key) {
     const beTitle = document.getElementById('beTitle');
     if (beTitle) beTitle.textContent = `Analytics (${window.TERMINAL_CONFIG.formatPrice(data.costBasis)} Basis)`;
     const tgtLabel = document.getElementById('probTargetLabel');
-    if (tgtLabel) tgtLabel.textContent = `P(Reach ≥ ${window.TERMINAL_CONFIG.formatPrice(data.targetLine)})`;
+    if (tgtLabel) tgtLabel.textContent = `Target Hit Odds (${window.TERMINAL_CONFIG.formatPrice(data.targetLine)})`;
     const strLabel = document.getElementById('probStretchLabel');
-    if (strLabel) strLabel.textContent = `P(Reach ≥ ${window.TERMINAL_CONFIG.formatPrice(data.stretchLine)})`;
+    if (strLabel) strLabel.textContent = `Stretch Hit Odds (${window.TERMINAL_CONFIG.formatPrice(data.stretchLine)})`;
 
     window.renderTiers(data);
     window.updateBreakEven();
@@ -138,7 +138,7 @@ function setupEventListeners() {
             if (volReadout) volReadout.textContent = e.target.value + '%';
             document.querySelectorAll('.scenario-chip').forEach(c => c.classList.remove('active'));
             const descEl = document.getElementById('regimeActiveDesc');
-            if (descEl) descEl.textContent = 'Manual quantitative parameter override active.';
+            if (descEl) descEl.textContent = 'Custom Parameter Override: Volatility & drift manually adjusted.';
             if (window.activeChartEngine === 'MC') window.runMonteCarlo();
         });
     }
@@ -148,7 +148,7 @@ function setupEventListeners() {
             if (driftReadout) driftReadout.textContent = (e.target.value >= 0 ? '+' : '') + e.target.value + '%';
             document.querySelectorAll('.scenario-chip').forEach(c => c.classList.remove('active'));
             const descEl = document.getElementById('regimeActiveDesc');
-            if (descEl) descEl.textContent = 'Manual quantitative parameter override active.';
+            if (descEl) descEl.textContent = 'Custom Parameter Override: Volatility & drift manually adjusted.';
             if (window.activeChartEngine === 'MC') window.runMonteCarlo();
         });
     }

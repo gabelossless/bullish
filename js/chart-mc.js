@@ -269,7 +269,7 @@ window.MonteCarloEngine = {
 
         const confBadge = document.getElementById('forecastConfidenceBadge');
         if (confBadge && data.calibration) {
-            confBadge.textContent = `${data.calibration.confidenceScore} STATISTICAL CONFIDENCE`;
+            confBadge.textContent = `${data.calibration.confidenceScore} MODEL CONFIDENCE`;
         }
     }
 };

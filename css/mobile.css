@@ -200,6 +200,30 @@
         font-size: 12px;
         line-height: 1.5;
     }
+    .trader-metrics-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+    .trader-levels-bar {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+    .trader-stat-box {
+        padding: 7px 9px;
+    }
+    .trader-stat-num {
+        font-size: 13px;
+    }
+    .trader-level-pill {
+        padding: 5px 7px;
+    }
+    .trader-level-pill .pill-val {
+        font-size: 10.5px;
+    }
+    .kelly-trader-pill-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
     .drawer-toggle-btn {
         padding: 10px 12px;
         font-size: 10.5px;

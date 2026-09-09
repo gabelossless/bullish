@@ -138,16 +138,16 @@
             </div>
             <div class="scenario-engine-bar">
                 <div class="scenario-chip active" data-regime="BASE" onclick="applyMacroScenario(event, 'BASE')">
-                    <span>⚖️ Base Consensus</span>
+                    <span>⚖️ Base Trend EV</span>
                 </div>
                 <div class="scenario-chip" data-regime="BULL" onclick="applyMacroScenario(event, 'BULL')">
-                    <span>🚀 Bull Momentum (+2.5σ)</span>
+                    <span>🚀 Bull Breakout</span>
                 </div>
                 <div class="scenario-chip" data-regime="DEFENSIVE" onclick="applyMacroScenario(event, 'DEFENSIVE')">
-                    <span>🛡️ Conservative Defense</span>
+                    <span>🛡️ Support Dip Buy</span>
                 </div>
                 <div class="scenario-chip" data-regime="SHOCK" onclick="applyMacroScenario(event, 'SHOCK')">
-                    <span>⚡ Catalyst / Gap Risk</span>
+                    <span>⚡ Volatility Flush</span>
                 </div>
             </div>
 
@@ -215,21 +215,21 @@
                 <div id="tvChartContainer"></div>
             </div>
 
-            <!-- Executive Statistical Forecast Narrative Card -->
+            <!-- Trader Signal & Execution Horizon Card -->
             <div class="forecast-narrative-card">
                 <div class="forecast-card-header">
                     <div class="forecast-card-title">
                         <span class="live-dot"></span>
-                        <span>⚡ Statistical Horizon Outlook</span>
+                        <span>⚡ Trader Signal & Decision Outlook</span>
                     </div>
-                    <span style="font-size: 10px; font-family: var(--font-mono); color: var(--brand-emerald); font-weight: 700;">AUTO-CALIBRATED</span>
+                    <span class="tag tag-green" style="font-size: 9.5px; letter-spacing: 0.05em;">AUTO-CALIBRATED EDGE</span>
                 </div>
                 <div class="forecast-card-body" id="forecastNarrativeText">
                     <!-- Dynamically generated plain-English forecast narrative -->
                 </div>
                 <div class="forecast-regime-desc">
-                    <span style="color: var(--brand-cyan);">Active Regime:</span>
-                    <span id="regimeActiveDesc">Realized 90D volatility & consensus operating leverage trajectory.</span>
+                    <span style="color: var(--brand-cyan); font-weight: 700;">Market Environment:</span>
+                    <span id="regimeActiveDesc">Operating leverage & international expansion momentum.</span>
                 </div>
             </div>
 
@@ -281,19 +281,19 @@
             <!-- Quantitative Readout Cells -->
             <div class="metrics-cards-grid">
                 <div class="metric-cell">
-                    <div class="metric-cell-label" id="probTargetLabel">P(Reach ≥ $11.00)</div>
+                    <div class="metric-cell-label" id="probTargetLabel">Target Hit Odds ($11.00)</div>
                     <div class="metric-cell-val" id="probTargetVal" style="color: var(--brand-cyan);">72.4%</div>
                 </div>
                 <div class="metric-cell">
-                    <div class="metric-cell-label" id="probStretchLabel">P(Reach ≥ $12.80)</div>
+                    <div class="metric-cell-label" id="probStretchLabel">Stretch Hit Odds ($12.80)</div>
                     <div class="metric-cell-val" id="probStretchVal" style="color: var(--brand-emerald);">44.8%</div>
                 </div>
                 <div class="metric-cell">
-                    <div class="metric-cell-label">50TH PCT (MEDIAN)</div>
+                    <div class="metric-cell-label">Expected Price (EV)</div>
                     <div class="metric-cell-val" id="p50Val">$11.85</div>
                 </div>
                 <div class="metric-cell">
-                    <div class="metric-cell-label">95TH PCT (BULL CASE)</div>
+                    <div class="metric-cell-label">Bull Extension (95%)</div>
                     <div class="metric-cell-val" id="p95Val" style="color: var(--brand-amber);">$16.20</div>
                 </div>
             </div>
@@ -343,7 +343,7 @@
         <!-- Strategy Execution Matrix & Kelly Criterion -->
         <div class="glass-card grid-span-full">
             <div class="card-header-row">
-                <div class="card-title">Algorithmic Execution Tiers & Kelly Allocation</div>
+                <div class="card-title">Execution Tiers & Position Sizing (Half-Kelly)</div>
                 <span class="tag tag-green">CAPITAL PRESERVATION</span>
             </div>
 
@@ -352,8 +352,8 @@
             </div>
 
             <div style="margin-top: 16px; padding: 16px; background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-md); border: 1px solid var(--border-hairline);">
-                <div style="font-size: 11px; font-family: var(--font-mono); color: var(--text-tertiary); text-transform: uppercase; margin-bottom: 4px;">
-                    KELLY CRITERION POSITION SIZING PROJECTION
+                <div style="font-size: 11px; font-family: var(--font-mono); color: var(--text-tertiary); text-transform: uppercase; margin-bottom: 8px;">
+                    HALF-KELLY OPTIMAL CAPITAL ALLOCATION
                 </div>
                 <div style="font-size: 13px; color: var(--text-secondary);" id="kellyRecommendation">
                     Select an execution tier above to inspect optimal capital allocation.
