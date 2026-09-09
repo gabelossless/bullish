@@ -27,10 +27,10 @@
     <!-- TradingView Lightweight Charts CDN -->
     <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
     
-    <!-- Modular Stylesheets -->
-    <link rel="stylesheet" href="/css/theme.css" />
-    <link rel="stylesheet" href="/css/layout.css" />
-    <link rel="stylesheet" href="/css/mobile.css" />
+    <!-- Modular Stylesheets (v2.2.0 Cache Busting) -->
+    <link rel="stylesheet" href="/css/theme.css?v=2.2.0" />
+    <link rel="stylesheet" href="/css/layout.css?v=2.2.0" />
+    <link rel="stylesheet" href="/css/mobile.css?v=2.2.0" />
 </head>
 <body>
 
@@ -225,11 +225,70 @@
                     <span class="tag tag-green" style="font-size: 9.5px; letter-spacing: 0.05em;">AUTO-CALIBRATED EDGE</span>
                 </div>
                 <div class="forecast-card-body" id="forecastNarrativeText">
-                    <!-- Dynamically generated plain-English forecast narrative -->
+                    <div class="trader-signal-header">
+                        <div class="trader-signal-left">
+                            <span class="tag tag-green">🟢 CONSTRUCTIVE LONG</span>
+                            <span class="trader-signal-title">BULL • 90D TRADE SIGNAL</span>
+                        </div>
+                        <div class="trader-signal-right">
+                            Target Win Rate: <strong style="color: var(--brand-emerald); font-size: 13px;">72.4% Odds</strong>
+                        </div>
+                    </div>
+
+                    <div class="trader-metrics-row">
+                        <div class="trader-stat-box">
+                            <span class="trader-stat-lbl">🎯 PROFIT TARGET (TP1)</span>
+                            <strong class="trader-stat-num" style="color: var(--brand-cyan);">$11.00</strong>
+                            <span class="trader-stat-sub" style="color: var(--brand-emerald);">+14.3% • 72.4% Hit Rate</span>
+                        </div>
+                        <div class="trader-stat-box">
+                            <span class="trader-stat-lbl">📈 EXPECTED VALUE (EV)</span>
+                            <strong class="trader-stat-num" style="color: #fff;">$11.85</strong>
+                            <span class="trader-stat-sub" style="color: var(--brand-emerald);">+23.2% 50th Median</span>
+                        </div>
+                        <div class="trader-stat-box">
+                            <span class="trader-stat-lbl">🛑 KEY SUPPORT / STOP</span>
+                            <strong class="trader-stat-num" style="color: var(--brand-amber);">$8.50</strong>
+                            <span class="trader-stat-sub" style="color: var(--text-secondary);">-11.6% Invalidation</span>
+                        </div>
+                        <div class="trader-stat-box">
+                            <span class="trader-stat-lbl">⚖️ ASYMMETRIC R:R</span>
+                            <strong class="trader-stat-num" style="color: var(--brand-emerald);">1 : 1.2</strong>
+                            <span class="trader-stat-sub" style="color: var(--brand-cyan);">1 : 2.8 to Runner</span>
+                        </div>
+                    </div>
+
+                    <div class="trader-action-callout">
+                        <div class="trader-action-header">
+                            <span class="action-tag">💡 ACTIONABLE TRADE SETUP</span>
+                            <span class="action-regime-pill">Baseline Trend Continuation</span>
+                        </div>
+                        <div class="trader-levels-bar">
+                            <div class="trader-level-pill">
+                                <span class="pill-lbl">BUY ZONE</span>
+                                <span class="pill-val">$8.50 – $9.45</span>
+                            </div>
+                            <div class="trader-level-pill">
+                                <span class="pill-lbl">SCALE-OUT (TP1)</span>
+                                <span class="pill-val" style="color: var(--brand-cyan);">$11.00 (Scale 50%)</span>
+                            </div>
+                            <div class="trader-level-pill">
+                                <span class="pill-lbl">RUNNER (TP2)</span>
+                                <span class="pill-val" style="color: var(--brand-emerald);">$12.80 (Hold Runner)</span>
+                            </div>
+                            <div class="trader-level-pill">
+                                <span class="pill-lbl">STOP LOSS</span>
+                                <span class="pill-val" style="color: var(--brand-amber);">Daily close &lt; $8.50</span>
+                            </div>
+                        </div>
+                        <div class="trader-strategy-note">
+                            <strong>Execution Plan:</strong> Consolidation below $11.00 institutional parity provides favorable risk asymmetry. Accumulate on dips in the $8.50–$9.45 buy zone. Take 50% profit at $11.00 Parity (+14.3%), move stop to breakeven, and let remaining 50% ride to $12.80 and $14.50 extensions.
+                        </div>
+                    </div>
                 </div>
                 <div class="forecast-regime-desc">
                     <span style="color: var(--brand-cyan); font-weight: 700;">Market Environment:</span>
-                    <span id="regimeActiveDesc">Operating leverage & international expansion momentum.</span>
+                    <span id="regimeActiveDesc">Baseline Trend Continuation • Operating leverage & international expansion momentum.</span>
                 </div>
             </div>
 
@@ -252,21 +311,21 @@
                         <div class="sliders-grid" style="margin-bottom: 0;">
                             <div class="slider-control-group">
                                 <div class="slider-label-row">
-                                    <span>VOLATILITY (σ)</span>
+                                    <span>REALIZED VOLATILITY (σ)</span>
                                     <span class="slider-readout" id="volReadout">62%</span>
                                 </div>
                                 <input type="range" id="volRange" min="10" max="250" value="62" />
                             </div>
                             <div class="slider-control-group">
                                 <div class="slider-label-row">
-                                    <span>ANNUAL DRIFT (μ)</span>
+                                    <span>ANNUAL DRIFT / MOMENTUM (μ)</span>
                                     <span class="slider-readout" id="driftReadout">+28%</span>
                                 </div>
                                 <input type="range" id="driftRange" min="-50" max="300" value="28" />
                             </div>
                             <div class="slider-control-group">
                                 <div class="slider-label-row">
-                                    <span>TIME HORIZON</span>
+                                    <span>SIMULATION HORIZON</span>
                                     <span class="slider-readout" id="daysReadout">90 Days</span>
                                 </div>
                                 <input type="range" id="daysRange" min="7" max="365" value="90" />
@@ -511,13 +570,13 @@
         </div>
     </div>
 
-    <!-- Modular Application Logic -->
-    <script src="/js/config.js"></script>
-    <script src="/js/oracle.js"></script>
-    <script src="/js/chart-mc.js"></script>
-    <script src="/js/chart-tv.js"></script>
-    <script src="/js/calculator.js"></script>
-    <script src="/js/pwa.js"></script>
-    <script src="/js/app.js"></script>
+    <!-- Modular Application Logic (v2.2.0 Cache Busting) -->
+    <script src="/js/config.js?v=2.2.0"></script>
+    <script src="/js/oracle.js?v=2.2.0"></script>
+    <script src="/js/chart-mc.js?v=2.2.0"></script>
+    <script src="/js/chart-tv.js?v=2.2.0"></script>
+    <script src="/js/calculator.js?v=2.2.0"></script>
+    <script src="/js/pwa.js?v=2.2.0"></script>
+    <script src="/js/app.js?v=2.2.0"></script>
 </body>
 </html>

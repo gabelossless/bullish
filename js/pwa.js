@@ -60,9 +60,14 @@ window.PWAController = {
             e.preventDefault();
             this.deferredPrompt = e;
 
+            try {
+                if (localStorage.getItem('webull_pwa_dismissed') === 'true') return;
+            } catch(err) {}
+
+            // Only auto-show banner on mobile devices to prevent covering desktop charts
+            const isMobile = window.innerWidth <= 768 || /Mobi|Android|iPhone/i.test(navigator.userAgent);
             const banner = document.getElementById('pwaInstallBanner');
-            if (banner && !this.isStandalone) {
-                // Show banner after 3 seconds of terminal usage
+            if (banner && !this.isStandalone && isMobile) {
                 setTimeout(() => {
                     banner.classList.add('active');
                 }, 3000);
@@ -106,6 +111,9 @@ window.PWAController = {
     dismissBanner() {
         const banner = document.getElementById('pwaInstallBanner');
         if (banner) banner.classList.remove('active');
+        try {
+            localStorage.setItem('webull_pwa_dismissed', 'true');
+        } catch(err) {}
     },
 
     showIOSGuide(show) {

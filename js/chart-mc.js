@@ -255,16 +255,20 @@ window.MonteCarloEngine = {
         // Update Executive Plain-English Forecast Narrative
         const narrativeEl = document.getElementById('forecastNarrativeText');
         if (narrativeEl && typeof window.TERMINAL_CONFIG.generateForecastNarrative === 'function') {
-            narrativeEl.innerHTML = window.TERMINAL_CONFIG.generateForecastNarrative(
-                window.currentAsset,
-                this.currentRegime || 'BASE',
-                days,
-                p50,
-                p95,
-                hitTargetPct,
-                hitStretchPct,
-                window.currentS0
-            );
+            try {
+                narrativeEl.innerHTML = window.TERMINAL_CONFIG.generateForecastNarrative(
+                    window.currentAsset,
+                    this.currentRegime || 'BASE',
+                    days,
+                    p50,
+                    p95,
+                    hitTargetPct,
+                    hitStretchPct,
+                    window.currentS0
+                );
+            } catch (err) {
+                console.warn('[Forecast] Error generating trade signal card:', err);
+            }
         }
 
         const confBadge = document.getElementById('forecastConfidenceBadge');
@@ -297,7 +301,7 @@ window.applyMacroScenario = function(e, scenario) {
         if (mToggle) mToggle.checked = reg.jumps;
 
         const descEl = document.getElementById('regimeActiveDesc');
-        if (descEl) descEl.textContent = reg.desc;
+        if (descEl) descEl.textContent = `${reg.name} • ${reg.desc}`;
     }
 
     window.runMonteCarlo();

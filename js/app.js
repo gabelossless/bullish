@@ -64,6 +64,7 @@ window.loadAsset = function(key) {
 
     if (window.activeChartEngine === 'TV') {
         window.TradingViewChartEngine.loadAssetCandles(key);
+        window.MonteCarloEngine.run();
     } else {
         window.MonteCarloEngine.resize();
         window.MonteCarloEngine.run();
