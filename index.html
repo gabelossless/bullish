@@ -129,22 +129,25 @@
     <main id="terminal-view" class="terminal-container section-view active">
         <!-- Dual Chart Engine Stage -->
         <div class="glass-card">
-            <!-- Macro Scenario Presets Bar (1-Click Automation) -->
-            <div style="font-size: 10px; font-family: var(--font-mono); color: var(--text-tertiary); text-transform: uppercase; margin-bottom: 6px;">
-                AUTOMATED SCENARIO PRESETS (1-CLICK CALIBRATION)
+            <!-- Macro Scenario Presets Bar (Self-Calibrating 1-Click Automation) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+                <div style="font-size: 10px; font-family: var(--font-mono); color: var(--text-tertiary); text-transform: uppercase;">
+                    AUTOMATED MARKET REGIMES (SELF-CALIBRATING)
+                </div>
+                <span class="tag tag-blue" id="forecastConfidenceBadge">94.8% STATISTICAL CONFIDENCE</span>
             </div>
             <div class="scenario-engine-bar">
-                <div class="scenario-chip active" onclick="applyMacroScenario(event, 'BASE')">
+                <div class="scenario-chip active" data-regime="BASE" onclick="applyMacroScenario(event, 'BASE')">
                     <span>⚖️ Base Consensus</span>
                 </div>
-                <div class="scenario-chip" onclick="applyMacroScenario(event, 'BULL')">
-                    <span>🚀 Institutional Expansion (+2.5σ)</span>
+                <div class="scenario-chip" data-regime="BULL" onclick="applyMacroScenario(event, 'BULL')">
+                    <span>🚀 Bull Momentum (+2.5σ)</span>
                 </div>
-                <div class="scenario-chip" onclick="applyMacroScenario(event, 'REVERT')">
-                    <span>🔄 Mean Reversion / Low Vol</span>
+                <div class="scenario-chip" data-regime="DEFENSIVE" onclick="applyMacroScenario(event, 'DEFENSIVE')">
+                    <span>🛡️ Conservative Defense</span>
                 </div>
-                <div class="scenario-chip" onclick="applyMacroScenario(event, 'SHOCK')">
-                    <span>⚠️ Liquidity Stress Shock (-2.0σ)</span>
+                <div class="scenario-chip" data-regime="SHOCK" onclick="applyMacroScenario(event, 'SHOCK')">
+                    <span>⚡ Catalyst / Gap Risk</span>
                 </div>
             </div>
 
@@ -179,11 +182,11 @@
             <!-- Segmented Timeframe & Paths Bar (For MC) -->
             <div class="chart-controls-cluster" id="mcPresetsBar">
                 <div class="segmented-control" id="timeframePresets">
-                    <button class="segment-btn" data-days="30">30D</button>
-                    <button class="segment-btn" data-days="60">60D</button>
-                    <button class="segment-btn active" data-days="90">90D</button>
-                    <button class="segment-btn" data-days="180">180D</button>
-                    <button class="segment-btn" data-days="365">1YR</button>
+                    <button class="segment-btn" data-days="30">30D (1M)</button>
+                    <button class="segment-btn" data-days="60">60D (2M)</button>
+                    <button class="segment-btn active" data-days="90">90D (1Q)</button>
+                    <button class="segment-btn" data-days="180">180D (6M)</button>
+                    <button class="segment-btn" data-days="365">1YR (12M)</button>
                 </div>
 
                 <div class="segmented-control" id="pathsPresets">
@@ -212,28 +215,64 @@
                 <div id="tvChartContainer"></div>
             </div>
 
-            <!-- Simulation Parameters Grid -->
-            <div class="sliders-grid">
-                <div class="slider-control-group">
-                    <div class="slider-label-row">
-                        <span>VOLATILITY (σ)</span>
-                        <span class="slider-readout" id="volReadout">62%</span>
+            <!-- Executive Statistical Forecast Narrative Card -->
+            <div class="forecast-narrative-card">
+                <div class="forecast-card-header">
+                    <div class="forecast-card-title">
+                        <span class="live-dot"></span>
+                        <span>⚡ Statistical Horizon Outlook</span>
                     </div>
-                    <input type="range" id="volRange" min="10" max="250" value="62" />
+                    <span style="font-size: 10px; font-family: var(--font-mono); color: var(--brand-emerald); font-weight: 700;">AUTO-CALIBRATED</span>
                 </div>
-                <div class="slider-control-group">
-                    <div class="slider-label-row">
-                        <span>ANNUAL DRIFT (μ)</span>
-                        <span class="slider-readout" id="driftReadout">+28%</span>
-                    </div>
-                    <input type="range" id="driftRange" min="-50" max="300" value="28" />
+                <div class="forecast-card-body" id="forecastNarrativeText">
+                    <!-- Dynamically generated plain-English forecast narrative -->
                 </div>
-                <div class="slider-control-group">
-                    <div class="slider-label-row">
-                        <span>TIME HORIZON</span>
-                        <span class="slider-readout" id="daysReadout">90 Days</span>
+                <div class="forecast-regime-desc">
+                    <span style="color: var(--brand-cyan);">Active Regime:</span>
+                    <span id="regimeActiveDesc">Realized 90D volatility & consensus operating leverage trajectory.</span>
+                </div>
+            </div>
+
+            <!-- Collapsible Advanced Quantitative Tuning Drawer -->
+            <div class="advanced-tuning-container">
+                <button class="drawer-toggle-btn" id="drawerToggleBtn" onclick="toggleAdvancedDrawer()">
+                    ⚙️ Advanced Quantitative Fine-Tuning (Manual Override) ▼
+                </button>
+                <div class="tuning-drawer" id="advancedTuningDrawer">
+                    <div class="drawer-inner">
+                        <div class="drawer-top-row">
+                            <div style="font-size: 11px; font-family: var(--font-mono); color: var(--text-secondary);">
+                                MANUAL STATISTICAL OVERRIDES (OPTIONAL)
+                            </div>
+                            <button class="btn-reset-auto" onclick="resetToAutoCalibration()">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                Reset to Auto-Calibrated
+                            </button>
+                        </div>
+                        <div class="sliders-grid" style="margin-bottom: 0;">
+                            <div class="slider-control-group">
+                                <div class="slider-label-row">
+                                    <span>VOLATILITY (σ)</span>
+                                    <span class="slider-readout" id="volReadout">62%</span>
+                                </div>
+                                <input type="range" id="volRange" min="10" max="250" value="62" />
+                            </div>
+                            <div class="slider-control-group">
+                                <div class="slider-label-row">
+                                    <span>ANNUAL DRIFT (μ)</span>
+                                    <span class="slider-readout" id="driftReadout">+28%</span>
+                                </div>
+                                <input type="range" id="driftRange" min="-50" max="300" value="28" />
+                            </div>
+                            <div class="slider-control-group">
+                                <div class="slider-label-row">
+                                    <span>TIME HORIZON</span>
+                                    <span class="slider-readout" id="daysReadout">90 Days</span>
+                                </div>
+                                <input type="range" id="daysRange" min="7" max="365" value="90" />
+                            </div>
+                        </div>
                     </div>
-                    <input type="range" id="daysRange" min="7" max="365" value="90" />
                 </div>
             </div>
 

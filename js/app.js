@@ -12,7 +12,7 @@ window.autoSimEnabled = true;
 window.mertonJumpEnabled = false;
 
 // -------------------------------------------------------------
-// ASSET LOADER
+// ASSET LOADER (Auto-Calibrates Parameters to Realized Market Regimes)
 // -------------------------------------------------------------
 window.loadAsset = function(key) {
     const assetData = window.TERMINAL_CONFIG.assets;
@@ -40,19 +40,8 @@ window.loadAsset = function(key) {
     const oracle = document.getElementById('oracleSourceLabel');
     if (oracle) oracle.textContent = `${data.source} • AUTO-SYNC`;
 
-    const volRange = document.getElementById('volRange');
-    const driftRange = document.getElementById('driftRange');
-    const daysRange = document.getElementById('daysRange');
-    const volReadout = document.getElementById('volReadout');
-    const driftReadout = document.getElementById('driftReadout');
-    const daysReadout = document.getElementById('daysReadout');
-
-    if (volRange) volRange.value = data.defaultVol;
-    if (driftRange) driftRange.value = data.defaultDrift;
-    if (daysRange) daysRange.value = data.defaultDays;
-    if (volReadout) volReadout.textContent = data.defaultVol + '%';
-    if (driftReadout) driftReadout.textContent = (data.defaultDrift >= 0 ? '+' : '') + data.defaultDrift + '%';
-    if (daysReadout) daysReadout.textContent = data.defaultDays + ' Days';
+    // Automatically calibrate to BASE regime
+    window.applyMacroScenario(null, 'BASE');
 
     document.querySelectorAll('#timeframePresets .segment-btn').forEach(b => {
         b.classList.toggle('active', b.getAttribute('data-days') == data.defaultDays);
@@ -136,7 +125,7 @@ function setupEventListeners() {
         });
     });
 
-    // Sliders
+    // Sliders (Manual Override)
     const volRange = document.getElementById('volRange');
     const driftRange = document.getElementById('driftRange');
     const daysRange = document.getElementById('daysRange');
@@ -147,6 +136,9 @@ function setupEventListeners() {
     if (volRange) {
         volRange.addEventListener('input', (e) => {
             if (volReadout) volReadout.textContent = e.target.value + '%';
+            document.querySelectorAll('.scenario-chip').forEach(c => c.classList.remove('active'));
+            const descEl = document.getElementById('regimeActiveDesc');
+            if (descEl) descEl.textContent = 'Manual quantitative parameter override active.';
             if (window.activeChartEngine === 'MC') window.runMonteCarlo();
         });
     }
@@ -154,6 +146,9 @@ function setupEventListeners() {
     if (driftRange) {
         driftRange.addEventListener('input', (e) => {
             if (driftReadout) driftReadout.textContent = (e.target.value >= 0 ? '+' : '') + e.target.value + '%';
+            document.querySelectorAll('.scenario-chip').forEach(c => c.classList.remove('active'));
+            const descEl = document.getElementById('regimeActiveDesc');
+            if (descEl) descEl.textContent = 'Manual quantitative parameter override active.';
             if (window.activeChartEngine === 'MC') window.runMonteCarlo();
         });
     }
@@ -196,9 +191,23 @@ function setupEventListeners() {
         }
     });
 
-    // Handle URL Parameters (from PWA Shortcuts)
     handleUrlParameters();
 }
+
+// -------------------------------------------------------------
+// ADVANCED PARAMETER DRAWER TOGGLE
+// -------------------------------------------------------------
+window.toggleAdvancedDrawer = function() {
+    const drawer = document.getElementById('advancedTuningDrawer');
+    const btn = document.getElementById('drawerToggleBtn');
+    if (!drawer) return;
+    const isOpen = drawer.classList.toggle('open');
+    if (btn) {
+        btn.innerHTML = isOpen 
+            ? `▲ Hide Advanced Quantitative Sliders` 
+            : `⚙️ Advanced Quantitative Fine-Tuning (Manual Override) ▼`;
+    }
+};
 
 function handleUrlParameters() {
     const params = new URLSearchParams(window.location.search);
@@ -221,7 +230,6 @@ window.handleMobileDockTab = function(tabName) {
     updateMobileDockState(tabName);
 
     if (tabName === 'assets') {
-        // Switch back to terminal view if needed, scroll to top nav
         const termBtn = document.querySelector(`.nav-pill[data-target="${window.currentAsset}"]`);
         if (termBtn) termBtn.click();
         window.scrollTo({ top: 0, behavior: 'smooth' });

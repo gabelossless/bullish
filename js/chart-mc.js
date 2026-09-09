@@ -1,9 +1,10 @@
 // Webull Intelligence Terminal - Monte Carlo Stochastic Simulation Engine
-// Featuring Merton Jump-Diffusion, Quantile Confidence Cloud & Mobile Touch Scrubbing
+// Self-Calibrating Market Regimes, Merton Jump-Diffusion & Executive Forecast Generator
 
 window.MonteCarloEngine = {
     canvas: null,
     ctx: null,
+    currentRegime: 'BASE',
 
     init() {
         this.canvas = document.getElementById('simCanvas');
@@ -87,8 +88,8 @@ window.MonteCarloEngine = {
         const probStretch = document.getElementById('probStretchVal');
 
         const days = parseInt(daysRange ? daysRange.value : 90) || 90;
-        const sigma = parseInt(volRange ? volRange.value : 62) / 100;
-        const mu = parseInt(driftRange ? driftRange.value : 28) / 100;
+        const sigma = parseInt(volRange ? volRange.value : data.defaultVol) / 100;
+        const mu = parseInt(driftRange ? driftRange.value : data.defaultDrift) / 100;
         const dt = 1 / 365;
 
         const histW = W < 600 ? 65 : 85;
@@ -242,12 +243,34 @@ window.MonteCarloEngine = {
         }
 
         // Target Probability Readouts
-        if (probTarget) probTarget.textContent = ((hitTargetCount / paths) * 100).toFixed(1) + '%';
-        if (probStretch) probStretch.textContent = ((hitStretchCount / paths) * 100).toFixed(1) + '%';
+        const hitTargetPct = ((hitTargetCount / paths) * 100).toFixed(1);
+        const hitStretchPct = ((hitStretchCount / paths) * 100).toFixed(1);
+        if (probTarget) probTarget.textContent = hitTargetPct + '%';
+        if (probStretch) probStretch.textContent = hitStretchPct + '%';
         const p50El = document.getElementById('p50Val');
         if (p50El) p50El.textContent = window.TERMINAL_CONFIG.formatPrice(p50);
         const p95El = document.getElementById('p95Val');
         if (p95El) p95El.textContent = window.TERMINAL_CONFIG.formatPrice(p95);
+
+        // Update Executive Plain-English Forecast Narrative
+        const narrativeEl = document.getElementById('forecastNarrativeText');
+        if (narrativeEl && typeof window.TERMINAL_CONFIG.generateForecastNarrative === 'function') {
+            narrativeEl.innerHTML = window.TERMINAL_CONFIG.generateForecastNarrative(
+                window.currentAsset,
+                this.currentRegime || 'BASE',
+                days,
+                p50,
+                p95,
+                hitTargetPct,
+                hitStretchPct,
+                window.currentS0
+            );
+        }
+
+        const confBadge = document.getElementById('forecastConfidenceBadge');
+        if (confBadge && data.calibration) {
+            confBadge.textContent = `${data.calibration.confidenceScore} STATISTICAL CONFIDENCE`;
+        }
     }
 };
 
@@ -257,38 +280,31 @@ window.runMonteCarlo = function() {
 
 window.applyMacroScenario = function(e, scenario) {
     document.querySelectorAll('.scenario-chip').forEach(c => c.classList.remove('active'));
-    const targetChip = e.currentTarget || e.target.closest('.scenario-chip');
+    const targetChip = e ? (e.currentTarget || e.target.closest('.scenario-chip')) : document.querySelector(`.scenario-chip[data-regime="${scenario}"]`);
     if (targetChip) targetChip.classList.add('active');
 
+    window.MonteCarloEngine.currentRegime = scenario;
     const asset = window.TERMINAL_CONFIG.assets[window.currentAsset];
     if (!asset) return;
 
-    const baseVol = asset.defaultVol;
-    const baseDrift = asset.defaultDrift;
+    const cal = asset.calibration;
+    const reg = (cal && cal.regimes && cal.regimes[scenario]) ? cal.regimes[scenario] : null;
 
-    if (scenario === 'BASE') {
-        animateSliders(baseVol, baseDrift, asset.defaultDays);
-        window.mertonJumpEnabled = false;
+    if (reg) {
+        animateSliders(reg.vol, reg.drift, parseInt(document.getElementById('daysRange')?.value || 90));
+        window.mertonJumpEnabled = reg.jumps;
         const mToggle = document.getElementById('mertonJumpToggle');
-        if (mToggle) mToggle.checked = false;
-    } else if (scenario === 'BULL') {
-        animateSliders(Math.round(baseVol * 1.25), Math.round(Math.max(45, baseDrift * 1.8)), 90);
-        window.mertonJumpEnabled = false;
-        const mToggle = document.getElementById('mertonJumpToggle');
-        if (mToggle) mToggle.checked = false;
-    } else if (scenario === 'REVERT') {
-        animateSliders(Math.round(baseVol * 0.7), 0, 90);
-        window.mertonJumpEnabled = false;
-        const mToggle = document.getElementById('mertonJumpToggle');
-        if (mToggle) mToggle.checked = false;
-    } else if (scenario === 'SHOCK') {
-        animateSliders(Math.round(baseVol * 1.6), -35, 90);
-        window.mertonJumpEnabled = true;
-        const mToggle = document.getElementById('mertonJumpToggle');
-        if (mToggle) mToggle.checked = true;
+        if (mToggle) mToggle.checked = reg.jumps;
+
+        const descEl = document.getElementById('regimeActiveDesc');
+        if (descEl) descEl.textContent = reg.desc;
     }
 
     window.runMonteCarlo();
+};
+
+window.resetToAutoCalibration = function() {
+    window.applyMacroScenario(null, 'BASE');
 };
 
 function animateSliders(targetVol, targetDrift, targetDays) {

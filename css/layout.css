@@ -533,6 +533,132 @@ canvas { width: 100%; height: 100%; display: block; }
     flex-wrap: wrap;
 }
 
+/* Executive Statistical Forecast Card */
+.forecast-narrative-card {
+    background: linear-gradient(135deg, rgba(0, 102, 255, 0.09), rgba(9, 13, 22, 0.95));
+    border: 1px solid rgba(0, 229, 255, 0.22);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+.forecast-narrative-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--brand-cyan), var(--brand-webull));
+}
+.forecast-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.forecast-card-title {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-weight: 800;
+    color: var(--brand-cyan);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.04em;
+}
+.forecast-card-body {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #e2e8f0;
+}
+.forecast-regime-desc {
+    margin-top: 8px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Collapsible Advanced Quant Tuning Drawer */
+.advanced-tuning-container {
+    margin-bottom: 18px;
+}
+.drawer-toggle-btn {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+.drawer-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #fff;
+}
+.tuning-drawer {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, margin 0.3s ease;
+    margin-top: 0;
+}
+.tuning-drawer.open {
+    max-height: 500px;
+    opacity: 1;
+    pointer-events: auto;
+    margin-top: 14px;
+}
+.drawer-inner {
+    background: rgba(15, 21, 36, 0.6);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-md);
+    padding: 16px;
+}
+.drawer-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.btn-reset-auto {
+    background: rgba(0, 229, 255, 0.1);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    color: var(--brand-cyan);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+.btn-reset-auto:hover {
+    background: rgba(0, 229, 255, 0.2);
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
+}
+
 /* Parameters Control Sliders */
 .sliders-grid {
     display: grid;

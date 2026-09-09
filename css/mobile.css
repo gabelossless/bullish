@@ -191,6 +191,20 @@
         justify-content: center;
     }
 
+    /* Forecast Narrative Card & Drawer on Mobile */
+    .forecast-narrative-card {
+        padding: 13px 14px;
+        margin-bottom: 14px;
+    }
+    .forecast-card-body {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+    .drawer-toggle-btn {
+        padding: 10px 12px;
+        font-size: 10.5px;
+    }
+
     /* Sliders: Enhanced Touch Area */
     .sliders-grid {
         gap: 10px;
